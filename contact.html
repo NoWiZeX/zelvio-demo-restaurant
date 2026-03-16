@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Le Mas Provençal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Le Mas Provençal</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="menu.html">La Carte</a></li>
+        <li><a href="reservation.html">Réservation</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+        <li><a href="reservation.html" class="nav-cta">Réserver une table</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+      <span class="section-label light">Nous rejoindre</span>
+      <h1>Contact</h1>
+      <p>Une question ? Un événement privé ? Nous sommes à votre écoute</p>
+    </div>
+  </section>
+
+  <!-- INFOS & FORMULAIRE -->
+  <section class="section contact-section">
+    <div class="container">
+      <div class="contact-layout">
+
+        <!-- INFOS PRATIQUES -->
+        <div class="contact-info-col reveal">
+          <h2>Informations pratiques</h2>
+
+          <div class="contact-info-block">
+            <div class="contact-info-icon">📍</div>
+            <div class="contact-info-text">
+              <h4>Adresse</h4>
+              <p>12 Route des Oliviers<br />13520 Les Baux-de-Provence</p>
+              <a href="https://maps.google.com/?q=43.7442,4.7956" target="_blank" rel="noopener" class="info-link">Voir sur Google Maps →</a>
+            </div>
+          </div>
+
+          <div class="contact-info-block">
+            <div class="contact-info-icon">📞</div>
+            <div class="contact-info-text">
+              <h4>Téléphone</h4>
+              <a href="tel:+33490543211" class="info-link info-phone">04 90 54 32 11</a>
+            </div>
+          </div>
+
+          <div class="contact-info-block">
+            <div class="contact-info-icon">✉️</div>
+            <div class="contact-info-text">
+              <h4>E-mail</h4>
+              <a href="mailto:contact@lemas-provencal.fr" class="info-link">contact@lemas-provencal.fr</a>
+            </div>
+          </div>
+
+          <div class="contact-info-block">
+            <div class="contact-info-icon">🕐</div>
+            <div class="contact-info-text">
+              <h4>Horaires d'ouverture</h4>
+              <table class="hours-table">
+                <tr><td>Lundi</td><td class="closed-cell">Fermé</td></tr>
+                <tr><td>Mardi</td><td>12h00–14h30 / 19h00–22h30</td></tr>
+                <tr><td>Mercredi</td><td>12h00–14h30 / 19h00–22h30</td></tr>
+                <tr><td>Jeudi</td><td>12h00–14h30 / 19h00–22h30</td></tr>
+                <tr><td>Vendredi</td><td>12h00–14h30 / 19h00–22h30</td></tr>
+                <tr><td>Samedi</td><td>12h00–14h30 / 19h00–22h30</td></tr>
+                <tr><td>Dimanche</td><td>12h00–14h30 / 19h00–22h30</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="contact-info-block">
+            <div class="contact-info-icon">🚗</div>
+            <div class="contact-info-text">
+              <h4>Comment nous trouver</h4>
+              <p>À 5 km des Baux-de-Provence, prendre la D27 direction Maussane-les-Alpilles, puis tourner sur la Route des Oliviers. Parking privé gratuit sur place.</p>
+            </div>
+          </div>
+
+          <div class="social-section">
+            <h4>Suivez-nous</h4>
+            <div class="social-links large">
+              <a href="#" class="social-link" aria-label="Facebook">f</a>
+              <a href="#" class="social-link" aria-label="Instagram">in</a>
+              <a href="#" class="social-link" aria-label="TripAdvisor">ta</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORMULAIRE DE CONTACT -->
+        <div class="contact-form-col reveal delay-1">
+          <div class="form-card">
+            <h2>Nous écrire</h2>
+            <p class="form-subtitle">Pour toute demande de renseignement, événement privé ou privatisation, écrivez-nous.</p>
+
+            <div class="alert alert-success" id="contactSuccess" style="display:none;">
+              <div class="alert-icon">✓</div>
+              <div class="alert-content">
+                <strong>Message envoyé !</strong>
+                <p>Nous avons bien reçu votre message et vous répondrons dans les plus brefs délais.</p>
+              </div>
+            </div>
+
+            <form id="contactForm" novalidate>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contact-prenom">Prénom <span class="required">*</span></label>
+                  <input type="text" id="contact-prenom" name="prenom" placeholder="Jean" />
+                  <span class="field-error" id="contact-prenom-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="contact-nom">Nom <span class="required">*</span></label>
+                  <input type="text" id="contact-nom" name="nom" placeholder="Dupont" />
+                  <span class="field-error" id="contact-nom-error"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-email">E-mail <span class="required">*</span></label>
+                <input type="email" id="contact-email" name="email" placeholder="jean@example.com" />
+                <span class="field-error" id="contact-email-error"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-sujet">Sujet <span class="required">*</span></label>
+                <select id="contact-sujet" name="sujet">
+                  <option value="">-- Choisir un sujet --</option>
+                  <option value="reservation">Renseignements réservation</option>
+                  <option value="privatisation">Privatisation / Événement privé</option>
+                  <option value="carte">Question sur la carte</option>
+                  <option value="autre">Autre</option>
+                </select>
+                <span class="field-error" id="contact-sujet-error"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-message">Message <span class="required">*</span></label>
+                <textarea id="contact-message" name="message" rows="6" placeholder="Votre message..."></textarea>
+                <span class="field-error" id="contact-message-error"></span>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full" id="contactSubmitBtn">
+                <span id="contactSubmitText">Envoyer le message</span>
+                <span id="contactSubmitLoader" class="btn-loader" style="display:none;"></span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CARTE GOOGLE MAPS -->
+  <section class="map-section">
+    <div class="map-header reveal">
+      <h2>Nous trouver</h2>
+      <p>12 Route des Oliviers, 13520 Les Baux-de-Provence</p>
+    </div>
+    <div class="map-container">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2901.5!2d4.7956!3d43.7442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDPCsDQ0JzM5LjEiTiA0wrA0Nyc0NC4yIkU!5e0!3m2!1sfr!2sfr!4v1700000000000!5m2!1sfr!2sfr"
+        width="100%"
+        height="480"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Le Mas Provençal — Google Maps">
+      </iframe>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="cta-overlay"></div>
+    <div class="container">
+      <div class="cta-content reveal">
+        <h2 class="section-title light">Prêt à nous rendre visite ?</h2>
+        <p>Réservez votre table en ligne ou appelez-nous directement.</p>
+        <div class="cta-buttons">
+          <a href="reservation.html" class="btn btn-primary btn-large">Réserver en ligne</a>
+          <a href="tel:+33490543211" class="btn btn-outline-light btn-large">04 90 54 32 11</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3 class="footer-logo">Le Mas Provençal</h3>
+          <p>Restaurant gastronomique au cœur des Alpilles, à Les Baux-de-Provence.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">f</a>
+            <a href="#" class="social-link" aria-label="Instagram">in</a>
+            <a href="#" class="social-link" aria-label="TripAdvisor">ta</a>
+          </div>
+        </div>
+        <div class="footer-nav">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="menu.html">La Carte</a></li>
+            <li><a href="reservation.html">Réservation</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-hours">
+          <h4>Horaires</h4>
+          <ul>
+            <li><span>Lundi</span><span class="closed">Fermé</span></li>
+            <li><span>Mardi — Dimanche</span></li>
+            <li><span class="indent">12h00 — 14h30</span></li>
+            <li><span class="indent">19h00 — 22h30</span></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Nous trouver</h4>
+          <p>12 Route des Oliviers<br />13520 Les Baux-de-Provence</p>
+          <a href="tel:+33490543211" class="footer-phone">04 90 54 32 11</a>
+          <a href="reservation.html" class="btn btn-primary btn-sm footer-btn">Réserver</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Le Mas Provençal — Tous droits réservés</p>
+        <p class="footer-demo">Site de démonstration réalisé par <strong>Zelvio</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

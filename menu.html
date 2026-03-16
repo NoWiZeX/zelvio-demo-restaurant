@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Carte — Le Mas Provençal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Le Mas Provençal</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="menu.html" class="active">La Carte</a></li>
+        <li><a href="reservation.html">Réservation</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="reservation.html" class="nav-cta">Réserver une table</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+      <span class="section-label light">Gastronomie provençale</span>
+      <h1>La Carte</h1>
+      <p>Des créations inspirées par le terroir, sublimées par la saison</p>
+    </div>
+  </section>
+
+  <!-- INTRO CARTE -->
+  <section class="section menu-intro-section">
+    <div class="container text-center">
+      <p class="menu-intro reveal">Notre carte évolue au fil des saisons et des arrivages du marché.<br />
+      Tous nos plats sont préparés à la minute avec des produits frais, majoritairement issus de producteurs locaux.</p>
+      <div class="menu-tabs reveal">
+        <button class="tab-btn active" data-tab="entrees">Entrées</button>
+        <button class="tab-btn" data-tab="plats">Plats</button>
+        <button class="tab-btn" data-tab="desserts">Desserts</button>
+        <button class="tab-btn" data-tab="vins">Vins</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION ENTRÉES -->
+  <section class="menu-section section" id="entrees">
+    <div class="container">
+      <div class="menu-category-header reveal">
+        <div class="category-line"></div>
+        <h2>Entrées</h2>
+        <div class="category-line"></div>
+      </div>
+      <div class="menu-items-grid">
+
+        <div class="menu-item reveal">
+          <div class="menu-item-header">
+            <div>
+              <h3>Soupe de truffes noires du Vaucluse</h3>
+              <span class="menu-tag">Signature</span>
+            </div>
+            <span class="menu-item-price">28 €</span>
+          </div>
+          <p>Bouillon de volaille fermière truffé, copeaux de truffe fraîche du Vaucluse, mouillettes au beurre de truffe noire, œuf poché</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Gluten · Œufs · Lait</span>
+          </div>
+        </div>
+
+        <div class="menu-item reveal delay-1">
+          <div class="menu-item-header">
+            <div>
+              <h3>Terrine de foie gras maison</h3>
+              <span class="menu-tag">Maison</span>
+            </div>
+            <span class="menu-item-price">24 €</span>
+          </div>
+          <p>Foie gras de canard mi-cuit au torchon, chutney de figues de Provence, brioche toastée au beurre salé, fleur de sel de Camargue</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Gluten · Lait</span>
+          </div>
+        </div>
+
+        <div class="menu-item reveal delay-2">
+          <div class="menu-item-header">
+            <div>
+              <h3>Salade de chèvre chaud aux herbes</h3>
+            </div>
+            <span class="menu-item-price">18 €</span>
+          </div>
+          <p>Crottin de chèvre rôti de la ferme des Alpilles, mesclun de jeunes pousses, tomates cerises confites au thym, vinaigrette au miel de lavande et noix de Grenoble</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Lait · Fruits à coque</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION PLATS -->
+  <section class="menu-section section bg-light" id="plats">
+    <div class="container">
+      <div class="menu-category-header reveal">
+        <div class="category-line"></div>
+        <h2>Plats</h2>
+        <div class="category-line"></div>
+      </div>
+      <div class="menu-items-grid">
+
+        <div class="menu-item reveal">
+          <div class="menu-item-header">
+            <div>
+              <h3>Agneau des Alpilles en croûte d'herbes</h3>
+              <span class="menu-tag">Signature</span>
+            </div>
+            <span class="menu-item-price">42 €</span>
+          </div>
+          <p>Selle d'agneau rôtie en croûte d'herbes de Provence, jus corsé au romarin sauvage, tian de légumes estivaux, gratin dauphinois à la truffe</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Lait · Gluten</span>
+          </div>
+        </div>
+
+        <div class="menu-item reveal delay-1">
+          <div class="menu-item-header">
+            <div>
+              <h3>Filet de saint-pierre rôti</h3>
+            </div>
+            <span class="menu-item-price">38 €</span>
+          </div>
+          <p>Filet de saint-pierre de Méditerranée, bouillabaisse légère au safran, rouille maison, brunoise de fenouil et orange, huile d'olive AOC des Baux</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Poisson · Gluten · Œufs</span>
+          </div>
+        </div>
+
+        <div class="menu-item reveal delay-2">
+          <div class="menu-item-header">
+            <div>
+              <h3>Magret de canard aux cerises</h3>
+            </div>
+            <span class="menu-item-price">36 €</span>
+          </div>
+          <p>Magret de canard du Périgord rôti rosé, sauce aux cerises aigres et vinaigre balsamique, polenta crémeuse aux herbes fraîches, haricots verts extra-fins</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Lait · Sulfites</span>
+          </div>
+        </div>
+
+        <div class="menu-item reveal delay-3">
+          <div class="menu-item-header">
+            <div>
+              <h3>Risotto aux champignons des bois</h3>
+              <span class="menu-tag">Végétarien</span>
+            </div>
+            <span class="menu-item-price">28 €</span>
+          </div>
+          <p>Risotto Carnaroli mantecato au parmesan 24 mois, assortiment de champignons sauvages (cèpes, girolles, pleurotes), huile de truffe blanche, parmesan râpé</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Lait · Sulfites</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DESSERTS -->
+  <section class="menu-section section" id="desserts">
+    <div class="container">
+      <div class="menu-category-header reveal">
+        <div class="category-line"></div>
+        <h2>Desserts</h2>
+        <div class="category-line"></div>
+      </div>
+      <div class="menu-items-grid">
+
+        <div class="menu-item reveal">
+          <div class="menu-item-header">
+            <div>
+              <h3>Soufflé chaud au Grand Marnier</h3>
+              <span class="menu-tag">Signature</span>
+            </div>
+            <span class="menu-item-price">16 €</span>
+          </div>
+          <p>Soufflé léger au Grand Marnier et zeste d'orange confite, crème anglaise à la vanille de Madagascar — À commander en début de repas</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Œufs · Lait · Gluten</span>
+          </div>
+        </div>
+
+        <div class="menu-item reveal delay-1">
+          <div class="menu-item-header">
+            <div>
+              <h3>Tarte aux figues et lavande</h3>
+            </div>
+            <span class="menu-item-price">14 €</span>
+          </div>
+          <p>Pâte sablée maison, crème d'amande à la lavande, figues fraîches de Provence rôties au miel, sorbet figue-basilic, tuile aux amandes</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Gluten · Œufs · Lait · Fruits à coque</span>
+          </div>
+        </div>
+
+        <div class="menu-item reveal delay-2">
+          <div class="menu-item-header">
+            <div>
+              <h3>Nougat glacé de Montélimar</h3>
+            </div>
+            <span class="menu-item-price">13 €</span>
+          </div>
+          <p>Nougat glacé aux amandes et pistaches de Sicile, coulis de fruits rouges de Provence, meringue française, feuille d'or</p>
+          <div class="menu-item-footer">
+            <span class="allergen">Œufs · Lait · Fruits à coque</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION VINS -->
+  <section class="menu-section section bg-light" id="vins">
+    <div class="container">
+      <div class="menu-category-header reveal">
+        <div class="category-line"></div>
+        <h2>Sélection de Vins</h2>
+        <div class="category-line"></div>
+      </div>
+      <p class="wine-intro reveal">Notre sommelier a sélectionné pour vous les meilleurs crus de Provence et de la vallée du Rhône. Carte des vins complète disponible sur demande.</p>
+      <div class="wine-grid">
+
+        <div class="wine-category reveal">
+          <h3 class="wine-cat-title">Vins Rouges</h3>
+          <div class="wine-item">
+            <div>
+              <strong>Bandol Rouge — Domaine Tempier</strong>
+              <span class="wine-region">Bandol, Provence</span>
+            </div>
+            <span class="wine-price">58 €</span>
+          </div>
+          <div class="wine-item">
+            <div>
+              <strong>Châteauneuf-du-Pape — Château Rayas</strong>
+              <span class="wine-region">Vallée du Rhône</span>
+            </div>
+            <span class="wine-price">95 €</span>
+          </div>
+          <div class="wine-item">
+            <div>
+              <strong>Les Baux-de-Provence — Mas de la Dame</strong>
+              <span class="wine-region">Les Baux, Provence</span>
+            </div>
+            <span class="wine-price">42 €</span>
+          </div>
+        </div>
+
+        <div class="wine-category reveal delay-1">
+          <h3 class="wine-cat-title">Vins Rosés</h3>
+          <div class="wine-item">
+            <div>
+              <strong>Palette Rosé — Château Simone</strong>
+              <span class="wine-region">Palette, Aix-en-Provence</span>
+            </div>
+            <span class="wine-price">52 €</span>
+          </div>
+          <div class="wine-item">
+            <div>
+              <strong>Côtes de Provence — Domaine Ott</strong>
+              <span class="wine-region">Côtes de Provence</span>
+            </div>
+            <span class="wine-price">48 €</span>
+          </div>
+          <div class="wine-item">
+            <div>
+              <strong>Tavel Rosé — Domaine de la Mordorée</strong>
+              <span class="wine-region">Tavel, Rhône</span>
+            </div>
+            <span class="wine-price">38 €</span>
+          </div>
+        </div>
+
+        <div class="wine-category reveal delay-2">
+          <h3 class="wine-cat-title">Vins Blancs</h3>
+          <div class="wine-item">
+            <div>
+              <strong>Cassis Blanc — Clos Sainte-Magdeleine</strong>
+              <span class="wine-region">Cassis, Provence</span>
+            </div>
+            <span class="wine-price">46 €</span>
+          </div>
+          <div class="wine-item">
+            <div>
+              <strong>Condrieu — Domaine Georges Vernay</strong>
+              <span class="wine-region">Condrieu, Rhône Nord</span>
+            </div>
+            <span class="wine-price">72 €</span>
+          </div>
+          <div class="wine-item">
+            <div>
+              <strong>Viognier — Château d'Aquéria</strong>
+              <span class="wine-region">Lirac, Rhône Sud</span>
+            </div>
+            <span class="wine-price">34 €</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MENUS -->
+  <section class="section menus-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Formules</span>
+        <h2 class="section-title">Nos menus</h2>
+      </div>
+      <div class="menus-grid">
+        <div class="menu-formula reveal">
+          <div class="formula-header">
+            <h3>Menu Déjeuner</h3>
+            <span class="formula-subtitle">Du mardi au vendredi</span>
+          </div>
+          <div class="formula-price">38 <span>€</span></div>
+          <ul class="formula-items">
+            <li>Entrée au choix</li>
+            <li>Plat du jour</li>
+            <li>Dessert du jour</li>
+            <li>Café ou thé</li>
+          </ul>
+          <a href="reservation.html" class="btn btn-secondary">Réserver</a>
+        </div>
+        <div class="menu-formula featured reveal delay-1">
+          <div class="formula-badge">Populaire</div>
+          <div class="formula-header">
+            <h3>Menu Découverte</h3>
+            <span class="formula-subtitle">Déjeuner & Dîner</span>
+          </div>
+          <div class="formula-price">65 <span>€</span></div>
+          <ul class="formula-items">
+            <li>Amuse-bouches du chef</li>
+            <li>Entrée au choix</li>
+            <li>Plat au choix</li>
+            <li>Dessert au choix</li>
+            <li>Mignardises</li>
+          </ul>
+          <a href="reservation.html" class="btn btn-primary">Réserver</a>
+        </div>
+        <div class="menu-formula reveal delay-2">
+          <div class="formula-header">
+            <h3>Menu Prestige</h3>
+            <span class="formula-subtitle">Expérience complète</span>
+          </div>
+          <div class="formula-price">95 <span>€</span></div>
+          <ul class="formula-items">
+            <li>Amuse-bouches & mise en bouche</li>
+            <li>2 Entrées au choix</li>
+            <li>Plat signature du chef</li>
+            <li>Assiette de fromages affinés</li>
+            <li>Dessert & Mignardises</li>
+          </ul>
+          <a href="reservation.html" class="btn btn-secondary">Réserver</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="cta-overlay"></div>
+    <div class="container">
+      <div class="cta-content reveal">
+        <h2 class="section-title light">Prêt à vivre l'expérience ?</h2>
+        <p>Réservez votre table dès maintenant et laissez-vous emporter par les saveurs de la Provence.</p>
+        <a href="reservation.html" class="btn btn-primary btn-large">Réserver une table</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3 class="footer-logo">Le Mas Provençal</h3>
+          <p>Restaurant gastronomique au cœur des Alpilles, à Les Baux-de-Provence.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">f</a>
+            <a href="#" class="social-link" aria-label="Instagram">in</a>
+            <a href="#" class="social-link" aria-label="TripAdvisor">ta</a>
+          </div>
+        </div>
+        <div class="footer-nav">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="menu.html">La Carte</a></li>
+            <li><a href="reservation.html">Réservation</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-hours">
+          <h4>Horaires</h4>
+          <ul>
+            <li><span>Lundi</span><span class="closed">Fermé</span></li>
+            <li><span>Mardi — Dimanche</span></li>
+            <li><span class="indent">12h00 — 14h30</span></li>
+            <li><span class="indent">19h00 — 22h30</span></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Nous trouver</h4>
+          <p>12 Route des Oliviers<br />13520 Les Baux-de-Provence</p>
+          <a href="tel:+33490543211" class="footer-phone">04 90 54 32 11</a>
+          <a href="reservation.html" class="btn btn-primary btn-sm footer-btn">Réserver</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Le Mas Provençal — Tous droits réservés</p>
+        <p class="footer-demo">Site de démonstration réalisé par <strong>Zelvio</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

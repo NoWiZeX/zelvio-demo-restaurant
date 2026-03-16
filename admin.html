@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administration — Le Mas Provençal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body">
+
+  <!-- ÉCRAN DE CONNEXION -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="login-logo-text">Le Mas Provençal</span>
+        <span class="login-logo-sub">Administration</span>
+      </div>
+      <h1 class="login-title">Connexion</h1>
+      <p class="login-subtitle">Accès réservé au personnel autorisé</p>
+
+      <div class="alert alert-error" id="loginError" style="display:none;">
+        <div class="alert-icon">✕</div>
+        <div class="alert-content">
+          <strong>Mot de passe incorrect</strong>
+        </div>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+      </form>
+      <a href="index.html" class="login-back">← Retour au site</a>
+    </div>
+  </div>
+
+  <!-- INTERFACE ADMIN -->
+  <div id="adminInterface" style="display:none;">
+
+    <!-- HEADER ADMIN -->
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <span class="admin-logo">Le Mas Provençal</span>
+        <span class="admin-badge">Administration</span>
+      </div>
+      <div class="admin-header-right">
+        <a href="index.html" class="btn btn-sm btn-outline-dark">Voir le site</a>
+        <button id="logoutBtn" class="btn btn-sm btn-danger">Déconnexion</button>
+      </div>
+    </header>
+
+    <!-- CONTENU ADMIN -->
+    <main class="admin-main">
+      <div class="admin-container">
+
+        <!-- STATS -->
+        <div class="admin-stats">
+          <div class="stat-card">
+            <div class="stat-icon today">📅</div>
+            <div class="stat-body">
+              <span class="stat-number" id="statToday">—</span>
+              <span class="stat-label">Réservations aujourd'hui</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon pending">⏳</div>
+            <div class="stat-body">
+              <span class="stat-number" id="statPending">—</span>
+              <span class="stat-label">En attente de confirmation</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon confirmed">✓</div>
+            <div class="stat-body">
+              <span class="stat-number" id="statConfirmed">—</span>
+              <span class="stat-label">Confirmées</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon total">📊</div>
+            <div class="stat-body">
+              <span class="stat-number" id="statTotal">—</span>
+              <span class="stat-label">Total des réservations</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FILTRES -->
+        <div class="admin-toolbar">
+          <h2 class="admin-section-title">Réservations</h2>
+          <div class="admin-filters">
+            <select id="filterStatut" class="admin-select">
+              <option value="">Tous les statuts</option>
+              <option value="en attente">En attente</option>
+              <option value="confirmée">Confirmées</option>
+              <option value="annulée">Annulées</option>
+            </select>
+            <input type="date" id="filterDate" class="admin-input" placeholder="Filtrer par date" />
+            <button id="refreshBtn" class="btn btn-sm btn-secondary">↻ Actualiser</button>
+          </div>
+        </div>
+
+        <!-- ÉTAT DE CHARGEMENT / ERREUR -->
+        <div id="adminLoading" class="admin-loading">
+          <div class="loading-spinner"></div>
+          <p>Chargement des réservations...</p>
+        </div>
+
+        <div id="adminError" class="admin-error-msg" style="display:none;">
+          <p>Impossible de charger les réservations. Vérifiez la configuration Supabase.</p>
+          <button id="retryBtn" class="btn btn-sm btn-secondary">Réessayer</button>
+        </div>
+
+        <!-- TABLEAU -->
+        <div id="adminTableWrapper" class="admin-table-wrapper" style="display:none;">
+          <div id="noResults" class="no-results" style="display:none;">
+            <p>Aucune réservation trouvée.</p>
+          </div>
+          <table class="admin-table" id="reservationsTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Client</th>
+                <th>Couverts</th>
+                <th>Téléphone</th>
+                <th>Message</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reservationsBody">
+              <!-- Rempli par JS -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

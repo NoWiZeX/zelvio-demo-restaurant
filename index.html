@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Mas Provençal — Restaurant Gastronomique aux Baux-de-Provence</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Le Mas Provençal</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html" class="active">Accueil</a></li>
+        <li><a href="menu.html">La Carte</a></li>
+        <li><a href="reservation.html">Réservation</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="reservation.html" class="nav-cta">Réserver une table</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-tagline fade-in">Les Baux-de-Provence</p>
+      <h1 class="hero-title fade-in delay-1">L'Art de la Table<br /><em>en Provence</em></h1>
+      <p class="hero-subtitle fade-in delay-2">Une cuisine gastronomique ancrée dans le terroir provençal,<br />sublimée par les saveurs du soleil et de la Méditerranée.</p>
+      <div class="hero-actions fade-in delay-3">
+        <a href="reservation.html" class="btn btn-primary">Réserver une table</a>
+        <a href="menu.html" class="btn btn-outline">Découvrir la carte</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Découvrir</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="section intro-section">
+    <div class="container">
+      <div class="intro-grid">
+        <div class="intro-text reveal">
+          <span class="section-label">Notre histoire</span>
+          <h2 class="section-title">Un mas authentique<br />au cœur des Alpilles</h2>
+          <p>Niché au milieu des oliviers centenaires, Le Mas Provençal vous accueille dans un cadre d'exception à deux pas du village des Baux-de-Provence. Notre chef, passionné par les produits du terroir, compose chaque jour une carte qui célèbre la richesse de la gastronomie provençale.</p>
+          <p>Truffes noires du Vaucluse, agneau des Alpilles, légumes du potager, huile d'olive AOC — chaque assiette est un voyage sensoriel au cœur de la Provence.</p>
+          <a href="menu.html" class="btn btn-secondary">Voir la carte</a>
+        </div>
+        <div class="intro-image reveal delay-1">
+          <div class="image-placeholder intro-img">
+            <div class="image-caption">Le Mas Provençal</div>
+          </div>
+          <div class="intro-badge">
+            <span class="badge-number">15</span>
+            <span class="badge-text">ans d'excellence</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POINTS FORTS -->
+  <section class="section features-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Nos engagements</span>
+        <h2 class="section-title">Ce qui nous distingue</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">🌿</div>
+          <h3>Produits locaux</h3>
+          <p>Nous travaillons exclusivement avec des producteurs locaux. Nos légumes viennent du potager, nos viandes des éleveurs des Alpilles.</p>
+        </div>
+        <div class="feature-card reveal delay-1">
+          <div class="feature-icon">👨‍🍳</div>
+          <h3>Cuisine du marché</h3>
+          <p>Notre carte évolue au fil des saisons et des arrivages. Chaque jour, le chef compose de nouvelles créations autour des meilleurs produits.</p>
+        </div>
+        <div class="feature-card reveal delay-2">
+          <div class="feature-icon">🍷</div>
+          <h3>Cave d'exception</h3>
+          <p>Plus de 200 références de vins sélectionnés par notre sommelier, avec une belle représentation des vignobles provençaux et de la vallée du Rhône.</p>
+        </div>
+        <div class="feature-card reveal delay-3">
+          <div class="feature-icon">🌸</div>
+          <h3>Cadre unique</h3>
+          <p>Terrasse ombragée par les platanes, salle voûtée en pierre, jardins fleuris — chaque espace raconte l'histoire de la Provence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU APERCU -->
+  <section class="section menu-preview-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Nos saveurs</span>
+        <h2 class="section-title">Un avant-goût de notre carte</h2>
+      </div>
+      <div class="menu-preview-grid">
+        <div class="menu-preview-card reveal">
+          <div class="menu-preview-img entree-img"></div>
+          <div class="menu-preview-body">
+            <span class="menu-category-label">Entrée</span>
+            <h3>Soupe de truffes noires du Vaucluse</h3>
+            <p>Bouillon de volaille truffé, copeaux de truffe fraîche, mouillettes au beurre de truffe</p>
+            <span class="menu-price">28 €</span>
+          </div>
+        </div>
+        <div class="menu-preview-card reveal delay-1">
+          <div class="menu-preview-img plat-img"></div>
+          <div class="menu-preview-body">
+            <span class="menu-category-label">Plat</span>
+            <h3>Agneau des Alpilles en croûte d'herbes</h3>
+            <p>Selle d'agneau rôtie, jus corsé au romarin, tian de légumes provençaux</p>
+            <span class="menu-price">42 €</span>
+          </div>
+        </div>
+        <div class="menu-preview-card reveal delay-2">
+          <div class="menu-preview-img dessert-img"></div>
+          <div class="menu-preview-body">
+            <span class="menu-category-label">Dessert</span>
+            <h3>Tarte aux figues et lavande</h3>
+            <p>Pâte sablée, crème d'amande, figues rôties au miel de lavande, sorbet figue</p>
+            <span class="menu-price">14 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="text-center reveal">
+        <a href="menu.html" class="btn btn-primary">Voir la carte complète</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA RESERVATION -->
+  <section class="section cta-section">
+    <div class="cta-overlay"></div>
+    <div class="container">
+      <div class="cta-content reveal">
+        <span class="section-label light">Réservez votre moment</span>
+        <h2 class="section-title light">Une table vous attend</h2>
+        <p>Rejoignez-nous pour un déjeuner sous la treille ou un dîner aux chandelles dans notre salle en pierre. Réservation en ligne rapide et confirmée par e-mail.</p>
+        <div class="cta-info">
+          <div class="cta-info-item">
+            <strong>Déjeuner</strong>
+            <span>Mardi — Dimanche · 12h — 14h30</span>
+          </div>
+          <div class="cta-divider"></div>
+          <div class="cta-info-item">
+            <strong>Dîner</strong>
+            <span>Mardi — Dimanche · 19h — 22h30</span>
+          </div>
+        </div>
+        <a href="reservation.html" class="btn btn-primary btn-large">Réserver une table</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÉMOIGNAGES -->
+  <section class="section testimonials-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Avis clients</span>
+        <h2 class="section-title">Ce que disent nos hôtes</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"Un repas d'exception dans un cadre magique. Le soufflé au Grand Marnier était à se damner. Nous reviendrons sans aucun doute !"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">ML</div>
+            <div>
+              <strong>Marie-Laure D.</strong>
+              <span>Paris</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal delay-1">
+          <div class="stars">★★★★★</div>
+          <p>"L'agneau des Alpilles était d'une tendreté remarquable. Le sommelier nous a conseillé un Bandol rouge absolument parfait. Bravo à toute l'équipe !"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">JP</div>
+            <div>
+              <strong>Jean-Pierre M.</strong>
+              <span>Lyon</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal delay-2">
+          <div class="stars">★★★★★</div>
+          <p>"Dîner romantique pour notre anniversaire de mariage. Le service était aux petits soins, la cuisine sublime. Un moment inoubliable en Provence."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SC</div>
+            <div>
+              <strong>Sophie & Christophe</strong>
+              <span>Bordeaux</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3 class="footer-logo">Le Mas Provençal</h3>
+          <p>Restaurant gastronomique au cœur des Alpilles, à Les Baux-de-Provence.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">f</a>
+            <a href="#" class="social-link" aria-label="Instagram">in</a>
+            <a href="#" class="social-link" aria-label="TripAdvisor">ta</a>
+          </div>
+        </div>
+        <div class="footer-nav">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="menu.html">La Carte</a></li>
+            <li><a href="reservation.html">Réservation</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-hours">
+          <h4>Horaires</h4>
+          <ul>
+            <li><span>Lundi</span><span class="closed">Fermé</span></li>
+            <li><span>Mardi — Dimanche</span></li>
+            <li><span class="indent">12h00 — 14h30</span></li>
+            <li><span class="indent">19h00 — 22h30</span></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Nous trouver</h4>
+          <p>12 Route des Oliviers<br />13520 Les Baux-de-Provence</p>
+          <a href="tel:+33490543211" class="footer-phone">04 90 54 32 11</a>
+          <a href="reservation.html" class="btn btn-primary btn-sm footer-btn">Réserver</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Le Mas Provençal — Tous droits réservés</p>
+        <p class="footer-demo">Site de démonstration réalisé par <strong>Zelvio</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

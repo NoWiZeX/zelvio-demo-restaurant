@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réservation — Le Mas Provençal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Le Mas Provençal</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="menu.html">La Carte</a></li>
+        <li><a href="reservation.html" class="active">Réservation</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="reservation.html" class="nav-cta">Réserver une table</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+      <span class="section-label light">Réservez votre moment</span>
+      <h1>Réservation</h1>
+      <p>Choisissez votre date et nous vous accueillerons avec le plus grand soin</p>
+    </div>
+  </section>
+
+  <!-- SECTION RÉSERVATION -->
+  <section class="section reservation-section">
+    <div class="container">
+      <div class="reservation-layout">
+
+        <!-- FORMULAIRE -->
+        <div class="reservation-form-wrapper reveal">
+          <div class="form-card">
+            <h2>Réserver une table</h2>
+            <p class="form-subtitle">Remplissez le formulaire ci-dessous. Confirmation par e-mail sous 24h.</p>
+
+            <!-- MESSAGE SUCCÈS -->
+            <div class="alert alert-success" id="successMessage" style="display:none;">
+              <div class="alert-icon">✓</div>
+              <div class="alert-content">
+                <strong>Réservation envoyée avec succès !</strong>
+                <p>Nous avons bien reçu votre demande et vous confirmerons par e-mail dans les plus brefs délais. À très bientôt au Mas Provençal !</p>
+              </div>
+            </div>
+
+            <!-- MESSAGE ERREUR -->
+            <div class="alert alert-error" id="errorMessage" style="display:none;">
+              <div class="alert-icon">✕</div>
+              <div class="alert-content">
+                <strong>Une erreur s'est produite</strong>
+                <p>Impossible d'envoyer votre réservation. Veuillez réessayer ou nous contacter par téléphone au <a href="tel:+33490543211">04 90 54 32 11</a>.</p>
+              </div>
+            </div>
+
+            <form id="reservationForm" novalidate>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="prenom">Prénom <span class="required">*</span></label>
+                  <input type="text" id="prenom" name="prenom" placeholder="Jean" autocomplete="given-name" />
+                  <span class="field-error" id="prenom-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="nom">Nom <span class="required">*</span></label>
+                  <input type="text" id="nom" name="nom" placeholder="Dupont" autocomplete="family-name" />
+                  <span class="field-error" id="nom-error"></span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="telephone">Téléphone <span class="required">*</span></label>
+                  <input type="tel" id="telephone" name="telephone" placeholder="06 12 34 56 78" autocomplete="tel" />
+                  <span class="field-error" id="telephone-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="email">E-mail <span class="required">*</span></label>
+                  <input type="email" id="email" name="email" placeholder="jean@example.com" autocomplete="email" />
+                  <span class="field-error" id="email-error"></span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="date_reservation">Date <span class="required">*</span></label>
+                  <input type="date" id="date_reservation" name="date_reservation" />
+                  <span class="field-error" id="date-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="heure">Heure <span class="required">*</span></label>
+                  <select id="heure" name="heure">
+                    <option value="">-- Choisir un créneau --</option>
+                    <optgroup label="Déjeuner">
+                      <option value="12:00">12h00</option>
+                      <option value="12:30">12h30</option>
+                      <option value="13:00">13h00</option>
+                      <option value="13:30">13h30</option>
+                      <option value="14:00">14h00</option>
+                    </optgroup>
+                    <optgroup label="Dîner">
+                      <option value="19:00">19h00</option>
+                      <option value="19:30">19h30</option>
+                      <option value="20:00">20h00</option>
+                      <option value="20:30">20h30</option>
+                      <option value="21:00">21h00</option>
+                      <option value="21:30">21h30</option>
+                      <option value="22:00">22h00</option>
+                    </optgroup>
+                  </select>
+                  <span class="field-error" id="heure-error"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="couverts">Nombre de couverts <span class="required">*</span></label>
+                <div class="couverts-selector">
+                  <button type="button" class="couverts-btn" id="couvertsDown" aria-label="Diminuer">−</button>
+                  <input type="number" id="couverts" name="couverts" value="2" min="1" max="12" readonly />
+                  <button type="button" class="couverts-btn" id="couvertsUp" aria-label="Augmenter">+</button>
+                  <span class="couverts-label">personnes</span>
+                </div>
+                <span class="field-error" id="couverts-error"></span>
+                <p class="field-hint">Pour les groupes de plus de 8 personnes, merci de nous contacter directement.</p>
+              </div>
+
+              <div class="form-group">
+                <label for="message">Message <span class="optional">(optionnel)</span></label>
+                <textarea id="message" name="message" rows="4" placeholder="Précisez vos demandes particulières : allergie, chaise haute, anniversaire, table en terrasse..."></textarea>
+              </div>
+
+              <div class="form-group form-consent">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="consent" name="consent" />
+                  <span class="checkmark"></span>
+                  J'accepte que mes données soient utilisées pour le traitement de ma réservation.
+                </label>
+                <span class="field-error" id="consent-error"></span>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                <span id="submitText">Envoyer ma réservation</span>
+                <span id="submitLoader" class="btn-loader" style="display:none;"></span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- INFOS PRATIQUES -->
+        <div class="reservation-info reveal delay-1">
+          <div class="info-card">
+            <h3>Informations pratiques</h3>
+            <div class="info-item">
+              <div class="info-icon">🕐</div>
+              <div>
+                <strong>Horaires</strong>
+                <p>Déjeuner : 12h00 — 14h30<br />Dîner : 19h00 — 22h30<br />Fermé le lundi</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">📍</div>
+              <div>
+                <strong>Adresse</strong>
+                <p>12 Route des Oliviers<br />13520 Les Baux-de-Provence</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">📞</div>
+              <div>
+                <strong>Téléphone</strong>
+                <a href="tel:+33490543211" class="info-link">04 90 54 32 11</a>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">✉️</div>
+              <div>
+                <strong>E-mail</strong>
+                <a href="mailto:contact@lemas-provencal.fr" class="info-link">contact@lemas-provencal.fr</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card info-card-notice">
+            <h4>Bon à savoir</h4>
+            <ul class="notice-list">
+              <li>Confirmation de réservation par e-mail sous 24h</li>
+              <li>Pour les groupes de plus de 8 personnes, merci de nous appeler</li>
+              <li>En cas d'empêchement, prévenez-nous 24h à l'avance</li>
+              <li>Tables réservées pendant 15 minutes après l'heure de réservation</li>
+            </ul>
+          </div>
+
+          <div class="info-card info-card-menu">
+            <h4>Nos menus</h4>
+            <div class="menu-formula-mini">
+              <span>Menu Déjeuner</span>
+              <span class="formula-price-mini">38 €</span>
+            </div>
+            <div class="menu-formula-mini">
+              <span>Menu Découverte</span>
+              <span class="formula-price-mini">65 €</span>
+            </div>
+            <div class="menu-formula-mini">
+              <span>Menu Prestige</span>
+              <span class="formula-price-mini">95 €</span>
+            </div>
+            <a href="menu.html" class="btn btn-secondary btn-sm" style="margin-top:1rem;display:inline-block;">Voir la carte</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3 class="footer-logo">Le Mas Provençal</h3>
+          <p>Restaurant gastronomique au cœur des Alpilles, à Les Baux-de-Provence.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">f</a>
+            <a href="#" class="social-link" aria-label="Instagram">in</a>
+            <a href="#" class="social-link" aria-label="TripAdvisor">ta</a>
+          </div>
+        </div>
+        <div class="footer-nav">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="menu.html">La Carte</a></li>
+            <li><a href="reservation.html">Réservation</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-hours">
+          <h4>Horaires</h4>
+          <ul>
+            <li><span>Lundi</span><span class="closed">Fermé</span></li>
+            <li><span>Mardi — Dimanche</span></li>
+            <li><span class="indent">12h00 — 14h30</span></li>
+            <li><span class="indent">19h00 — 22h30</span></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Nous trouver</h4>
+          <p>12 Route des Oliviers<br />13520 Les Baux-de-Provence</p>
+          <a href="tel:+33490543211" class="footer-phone">04 90 54 32 11</a>
+          <a href="reservation.html" class="btn btn-primary btn-sm footer-btn">Réserver</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Le Mas Provençal — Tous droits réservés</p>
+        <p class="footer-demo">Site de démonstration réalisé par <strong>Zelvio</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
