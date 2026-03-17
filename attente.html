@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liste d'attente — Le Mas Provençal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Le Mas Provençal</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="menu.html">La Carte</a></li>
+        <li><a href="reservation.html">Réservation</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="reservation.html" class="nav-cta">Réserver une table</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1920&q=80')">
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+      <span class="section-label light">Aucune disponibilité ?</span>
+      <h1>Liste d'attente</h1>
+      <p>Laissez-nous vos coordonnées, nous vous contacterons dès qu'une table se libère</p>
+    </div>
+  </section>
+
+  <!-- SECTION LISTE D'ATTENTE -->
+  <section class="section attente-section">
+    <div class="container">
+      <div class="attente-form-wrapper reveal">
+        <div class="form-card">
+          <h2>Rejoindre la liste d'attente</h2>
+          <p class="form-subtitle">Nous vous contacterons dès qu'une table correspondant à votre demande se libère.</p>
+
+          <!-- MESSAGE SUCCÈS -->
+          <div class="alert alert-success" id="attenteSuccess" style="display:none;">
+            <div class="alert-icon">✓</div>
+            <div class="alert-content">
+              <strong>Demande enregistrée !</strong>
+              <p>Votre demande a bien été prise en compte. Notre équipe vous contactera dans les meilleurs délais si une table se libère. À bientôt au Mas Provençal !</p>
+            </div>
+          </div>
+
+          <!-- MESSAGE ERREUR -->
+          <div class="alert alert-error" id="attenteError" style="display:none;">
+            <div class="alert-icon">✕</div>
+            <div class="alert-content">
+              <strong>Une erreur s'est produite</strong>
+              <p>Impossible d'enregistrer votre demande. Veuillez réessayer ou nous appeler au <a href="tel:+33490543211">04 90 54 32 11</a>.</p>
+            </div>
+          </div>
+
+          <form id="attenteForm" novalidate>
+
+            <!-- NOM & PRÉNOM -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="att_prenom">Prénom <span class="required">*</span></label>
+                <input type="text" id="att_prenom" name="prenom" placeholder="Jean" autocomplete="given-name" />
+                <span class="field-error" id="att_prenom-error"></span>
+              </div>
+              <div class="form-group">
+                <label for="att_nom">Nom <span class="required">*</span></label>
+                <input type="text" id="att_nom" name="nom" placeholder="Dupont" autocomplete="family-name" />
+                <span class="field-error" id="att_nom-error"></span>
+              </div>
+            </div>
+
+            <!-- TÉLÉPHONE & EMAIL -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="att_telephone">Téléphone <span class="required">*</span></label>
+                <input type="tel" id="att_telephone" name="telephone" placeholder="06 12 34 56 78" autocomplete="tel" />
+                <span class="field-error" id="att_telephone-error"></span>
+              </div>
+              <div class="form-group">
+                <label for="att_email">E-mail <span class="required">*</span></label>
+                <input type="email" id="att_email" name="email" placeholder="jean@example.com" autocomplete="email" />
+                <span class="field-error" id="att_email-error"></span>
+              </div>
+            </div>
+
+            <!-- DATE & COUVERTS -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="att_date">Date souhaitée <span class="required">*</span></label>
+                <input type="date" id="att_date" name="date_souhaitee" class="form-control" />
+                <span class="field-error" id="att_date-error"></span>
+              </div>
+              <div class="form-group">
+                <label>Nombre de couverts <span class="required">*</span></label>
+                <div class="couverts-selector">
+                  <button type="button" class="couverts-btn" id="attCouvertsDown" aria-label="Diminuer">−</button>
+                  <input type="number" id="att_couverts" name="couverts" value="2" min="1" max="20" readonly />
+                  <button type="button" class="couverts-btn" id="attCouvertsUp" aria-label="Augmenter">+</button>
+                  <span class="couverts-label" id="attCouvertsLabel">personnes</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- MESSAGE -->
+            <div class="form-group">
+              <label for="att_message">Message <span class="optional">(optionnel)</span></label>
+              <textarea id="att_message" name="message" rows="3" placeholder="Précisez vos préférences : occasion spéciale, table en terrasse, allergie..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full" id="attenteSubmitBtn">
+              <span id="attenteSubmitText">Rejoindre la liste d'attente</span>
+              <span id="attenteSubmitLoader" class="btn-loader" style="display:none;"></span>
+            </button>
+          </form>
+        </div>
+
+        <!-- INFORMATIONS -->
+        <div class="info-card" style="margin-top:1.5rem;">
+          <h3>Comment ça fonctionne ?</h3>
+          <ul class="notice-list">
+            <li>Remplissez le formulaire avec vos coordonnées et la date souhaitée</li>
+            <li>Notre équipe consulte la liste d'attente quotidiennement</li>
+            <li>Nous vous contactons par téléphone ou e-mail dès qu'une table se libère</li>
+            <li>Vous avez 2h pour confirmer votre réservation</li>
+          </ul>
+          <p style="margin-top:1rem;font-size:0.88rem;color:var(--text-lighter);">
+            Vous pouvez aussi nous appeler directement au <a href="tel:+33490543211" style="color:var(--bordeaux);font-weight:700;">04 90 54 32 11</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3 class="footer-logo">Le Mas Provençal</h3>
+          <p>Restaurant gastronomique au cœur des Alpilles, à Les Baux-de-Provence.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">f</a>
+            <a href="#" class="social-link" aria-label="Instagram">in</a>
+            <a href="#" class="social-link" aria-label="TripAdvisor">ta</a>
+          </div>
+        </div>
+        <div class="footer-nav">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="menu.html">La Carte</a></li>
+            <li><a href="reservation.html">Réservation</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-hours">
+          <h4>Horaires</h4>
+          <ul>
+            <li><span>Lundi</span><span class="closed">Fermé</span></li>
+            <li><span>Mardi — Dimanche</span></li>
+            <li><span class="indent">12h00 — 14h30</span></li>
+            <li><span class="indent">19h00 — 22h30</span></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Nous trouver</h4>
+          <p>12 Route des Oliviers<br />13520 Les Baux-de-Provence</p>
+          <a href="tel:+33490543211" class="footer-phone">04 90 54 32 11</a>
+          <a href="reservation.html" class="btn btn-primary btn-sm footer-btn">Réserver</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Le Mas Provençal — Tous droits réservés</p>
+        <p class="footer-demo">Site de démonstration réalisé par <strong>Zelvio</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    (function initAttenteForm() {
+      const form = document.getElementById('attenteForm');
+      if (!form) return;
+
+      /* Couverts counter */
+      const couvertsInput = document.getElementById('att_couverts');
+      const couvertsLabel = document.getElementById('attCouvertsLabel');
+      const updateLabel   = () => {
+        if (couvertsLabel) couvertsLabel.textContent = parseInt(couvertsInput.value) <= 1 ? 'personne' : 'personnes';
+      };
+      document.getElementById('attCouvertsDown')?.addEventListener('click', () => {
+        const v = parseInt(couvertsInput.value) || 2;
+        if (v > 1) { couvertsInput.value = v - 1; updateLabel(); }
+      });
+      document.getElementById('attCouvertsUp')?.addEventListener('click', () => {
+        const v = parseInt(couvertsInput.value) || 2;
+        if (v < 20) { couvertsInput.value = v + 1; updateLabel(); }
+      });
+
+      /* Date min = today */
+      const dateEl = document.getElementById('att_date');
+      if (dateEl) {
+        const today = new Date();
+        const iso   = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+        dateEl.min = iso;
+      }
+
+      /* Helpers */
+      function setInvalid(id, msg) {
+        const inp = document.getElementById(id);
+        const err = document.getElementById(id + '-error');
+        if (inp) inp.classList.add('invalid');
+        if (err) err.textContent = msg;
+      }
+      function clearInvalid(id) {
+        const inp = document.getElementById(id);
+        const err = document.getElementById(id + '-error');
+        if (inp) inp.classList.remove('invalid');
+        if (err) err.textContent = '';
+      }
+
+      /* Submit */
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        let ok = true;
+        const check = (id, test, msg) => {
+          const el = document.getElementById(id);
+          if (!test(el?.value || '')) { setInvalid(id, msg); ok = false; } else clearInvalid(id);
+        };
+
+        check('att_prenom',    v => v.trim().length >= 2,                          'Prénom requis.');
+        check('att_nom',       v => v.trim().length >= 2,                          'Nom requis.');
+        check('att_telephone', v => /^[\d\s\+\-\(\)\.]{8,}$/.test(v.trim()),       'Téléphone invalide.');
+        check('att_email',     v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()),   'E-mail invalide.');
+        check('att_date',      v => !!v,                                            'Veuillez choisir une date.');
+
+        if (!ok) return;
+
+        const submitBtn  = document.getElementById('attenteSubmitBtn');
+        const submitText = document.getElementById('attenteSubmitText');
+        const loader     = document.getElementById('attenteSubmitLoader');
+        const successMsg = document.getElementById('attenteSuccess');
+        const errorMsg   = document.getElementById('attenteError');
+
+        submitBtn.disabled = true;
+        submitText.style.display = 'none';
+        loader.style.display     = 'inline-block';
+        successMsg.style.display = 'none';
+        errorMsg.style.display   = 'none';
+
+        const data = {
+          prenom:        document.getElementById('att_prenom').value.trim(),
+          nom:           document.getElementById('att_nom').value.trim(),
+          telephone:     document.getElementById('att_telephone').value.trim(),
+          email:         document.getElementById('att_email').value.trim(),
+          date_souhaitee: document.getElementById('att_date').value,
+          couverts:      parseInt(couvertsInput.value) || 2,
+          message:       document.getElementById('att_message').value.trim() || null,
+        };
+
+        try {
+          const sb = getSupabase();
+          if (!sb) throw new Error('Supabase non initialisé.');
+          const { error } = await sb.from('liste_attente').insert([data]);
+          if (error) throw error;
+          successMsg.style.display = 'flex';
+          form.style.display = 'none';
+          successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          console.error('Erreur liste attente:', err);
+          errorMsg.style.display = 'flex';
+          errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } finally {
+          submitBtn.disabled = false;
+          submitText.style.display = 'inline';
+          loader.style.display     = 'none';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

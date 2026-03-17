@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seed — Le Mas Provençal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Lato', sans-serif; background: #F0F2F5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .card { background: #fff; border-radius: 12px; padding: 2.5rem; max-width: 700px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #8B2635; margin-bottom: 0.25rem; }
+    .subtitle { font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: #9C8E7A; margin-bottom: 2rem; }
+    h1 { font-size: 1.3rem; margin-bottom: 0.5rem; color: #2C2416; }
+    p { font-size: 0.9rem; color: #6B5E4A; margin-bottom: 1.5rem; line-height: 1.6; }
+    .warning { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.85rem; color: #92400E; margin-bottom: 1.5rem; }
+    .warning strong { display: block; margin-bottom: 0.3rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 4px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #8B2635; color: #fff; }
+    .btn-primary:hover { background: #6E1D29; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-danger { background: #DC2626; color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-secondary { background: transparent; color: #8B2635; border: 2px solid #8B2635; }
+    .btn-secondary:hover { background: #8B2635; color: #fff; }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .progress { margin-top: 1.5rem; display: none; }
+    .progress-bar-bg { background: #EDE5D4; border-radius: 20px; height: 10px; overflow: hidden; margin-bottom: 0.75rem; }
+    .progress-bar { background: #8B2635; height: 100%; border-radius: 20px; width: 0%; transition: width 0.3s ease; }
+    .progress-label { font-size: 0.82rem; color: #6B5E4A; text-align: center; }
+    .log { margin-top: 1.5rem; background: #1E293B; border-radius: 8px; padding: 1rem 1.25rem; max-height: 280px; overflow-y: auto; display: none; }
+    .log-line { font-family: 'Courier New', monospace; font-size: 0.78rem; padding: 0.18rem 0; }
+    .log-ok   { color: #86EFAC; }
+    .log-err  { color: #FCA5A5; }
+    .log-info { color: #93C5FD; }
+    .summary { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 1.25rem; margin-top: 1.5rem; display: none; }
+    .summary h3 { color: #166534; margin-bottom: 0.5rem; font-size: 1rem; }
+    .summary p { color: #15803D; font-size: 0.88rem; margin-bottom: 0; }
+    .back-link { display: inline-block; margin-top: 1.5rem; font-size: 0.85rem; color: #9C8E7A; text-decoration: underline; cursor: pointer; }
+    .back-link:hover { color: #8B2635; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Le Mas Provençal</div>
+  <div class="subtitle">Données de démonstration</div>
+
+  <h1>Insérer les réservations fictives</h1>
+  <p>
+    Ce script insère <strong>72 réservations réalistes</strong> sur 4 semaines (passé + futur) dans votre base Supabase,
+    simulant l'activité d'un restaurant gastronomique : noms français, créneaux variés, couverts, messages, quelques annulations.
+  </p>
+
+  <div class="warning">
+    <strong>⚠️ À n'utiliser qu'une seule fois</strong>
+    Chaque clic sur "Insérer" ajoute les réservations en double. Utilisez "Tout supprimer" pour réinitialiser si besoin.
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="btnInsert">Insérer les réservations</button>
+    <button class="btn btn-danger"  id="btnDelete">Tout supprimer</button>
+    <a href="admin.html" class="btn btn-secondary">Aller au panel admin</a>
+  </div>
+
+  <div class="progress" id="progressSection">
+    <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">Préparation…</div>
+  </div>
+
+  <div class="log" id="logBox"></div>
+
+  <div class="summary" id="summaryBox">
+    <h3>✓ Terminé</h3>
+    <p id="summaryText"></p>
+  </div>
+
+  <a class="back-link" href="admin.html">← Retour au panel admin</a>
+</div>
+
+<script>
+/* ---- CONFIG ---- */
+const SUPABASE_URL = 'https://mknqupbuniryqjasekhc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_GRFV5w5CBnKu78dIKhXWkQ_kTOzxZXt';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ---- DONNÉES (72 réservations) ----
+   Lundi = fermé → dates choisies Mardi–Dimanche
+   Semaine réelle : 16 mars 2026 = Lundi (fermé)
+   Passé  : 3–15 mars (mar–dim seulement)
+   Futur  : 17–29 mars (mar–dim seulement)
+*/
+const DATA = [
+
+  /* ══ 3 MARS (Mardi) ══ */
+  { prenom:'Sophie',    nom:'Marchand',  telephone:'06 12 34 56 78', email:'sophie.marchand@gmail.com',  date_reservation:'2026-03-03', heure:'12:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Pierre',    nom:'Dubois',    telephone:'06 23 45 67 89', email:'pierre.dubois@orange.fr',    date_reservation:'2026-03-03', heure:'12:30', couverts:4, message:'Table en terrasse si possible',      statut:'confirmée' },
+  { prenom:'Nathalie',  nom:'Laurent',   telephone:'06 34 56 78 90', email:'nathalie.laurent@free.fr',   date_reservation:'2026-03-03', heure:'19:30', couverts:2, message:'Anniversaire de mariage',             statut:'confirmée' },
+  { prenom:'Jean-Paul', nom:'Renard',    telephone:'06 45 67 89 01', email:'jp.renard@sfr.fr',           date_reservation:'2026-03-03', heure:'20:00', couverts:3, message:'',                                   statut:'confirmée' },
+
+  /* ══ 4 MARS (Mercredi) ══ */
+  { prenom:'Marie',     nom:'Bernard',   telephone:'06 56 78 90 12', email:'marie.bernard@gmail.com',    date_reservation:'2026-03-04', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'François',  nom:'Moreau',    telephone:'06 67 89 01 23', email:'f.moreau@outlook.com',       date_reservation:'2026-03-04', heure:'13:00', couverts:6, message:'Repas professionnel',                 statut:'confirmée' },
+  { prenom:'Isabelle',  nom:'Petit',     telephone:'06 78 90 12 34', email:'isabelle.petit@yahoo.fr',    date_reservation:'2026-03-04', heure:'19:00', couverts:2, message:'',                                   statut:'annulée'   },
+  { prenom:'Michel',    nom:'Thomas',    telephone:'06 89 01 23 45', email:'m.thomas@gmail.com',         date_reservation:'2026-03-04', heure:'20:30', couverts:4, message:'Chaise haute nécessaire',             statut:'confirmée' },
+
+  /* ══ 5 MARS (Jeudi) ══ */
+  { prenom:'Alain',     nom:'Fontaine',  telephone:'06 90 12 34 56', email:'alain.fontaine@free.fr',     date_reservation:'2026-03-05', heure:'12:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Céline',    nom:'Girard',    telephone:'06 01 23 45 67', email:'celine.girard@gmail.com',    date_reservation:'2026-03-05', heure:'13:30', couverts:3, message:'Intolérance au gluten pour 1 pers.', statut:'confirmée' },
+  { prenom:'Bruno',     nom:'Favre',     telephone:'06 12 98 76 54', email:'b.favre@sfr.fr',             date_reservation:'2026-03-05', heure:'19:30', couverts:5, message:'',                                   statut:'confirmée' },
+  { prenom:'Claire',    nom:'Morin',     telephone:'06 23 87 65 43', email:'claire.morin@orange.fr',     date_reservation:'2026-03-05', heure:'21:00', couverts:2, message:'Menu prestige pour toute la table',  statut:'confirmée' },
+
+  /* ══ 6 MARS (Vendredi) ══ */
+  { prenom:'Stéphane',  nom:'Legrand',   telephone:'06 34 76 54 32', email:'stephane.legrand@gmail.com', date_reservation:'2026-03-06', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Virginie',  nom:'Perrot',    telephone:'06 45 65 43 21', email:'v.perrot@laposte.net',       date_reservation:'2026-03-06', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Olivier',   nom:'Chevalier', telephone:'06 56 54 32 10', email:'o.chevalier@gmail.com',      date_reservation:'2026-03-06', heure:'19:00', couverts:6, message:'Anniversaire 50 ans — surprise !',   statut:'confirmée' },
+  { prenom:'Anne',      nom:'Rousseau',  telephone:'06 67 43 21 09', email:'anne.rousseau@free.fr',      date_reservation:'2026-03-06', heure:'20:00', couverts:2, message:'Allergie aux crustacés',              statut:'confirmée' },
+  { prenom:'Luc',       nom:'Gauthier',  telephone:'06 78 32 10 98', email:'luc.gauthier@yahoo.fr',      date_reservation:'2026-03-06', heure:'21:00', couverts:3, message:'',                                   statut:'confirmée' },
+
+  /* ══ 7 MARS (Samedi) ══ */
+  { prenom:'Hélène',    nom:'Dupont',    telephone:'06 89 21 09 87', email:'helene.dupont@gmail.com',    date_reservation:'2026-03-07', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Patrick',   nom:'Leroy',     telephone:'06 90 10 98 76', email:'p.leroy@sfr.fr',             date_reservation:'2026-03-07', heure:'12:30', couverts:2, message:'Table au calme de préférence',       statut:'confirmée' },
+  { prenom:'Julie',     nom:'Robert',    telephone:'06 01 09 87 65', email:'julie.robert@gmail.com',     date_reservation:'2026-03-07', heure:'13:00', couverts:6, message:'',                                   statut:'confirmée' },
+  { prenom:'Eric',      nom:'Simon',     telephone:'06 12 08 76 54', email:'e.simon@orange.fr',          date_reservation:'2026-03-07', heure:'19:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Valérie',   nom:'Blanc',     telephone:'06 23 07 65 43', email:'val.blanc@free.fr',          date_reservation:'2026-03-07', heure:'19:30', couverts:4, message:'Végétarien parmi les convives',       statut:'confirmée' },
+  { prenom:'Christophe',nom:'Roux',      telephone:'06 34 06 54 32', email:'c.roux@gmail.com',           date_reservation:'2026-03-07', heure:'20:00', couverts:8, message:'Repas de famille',                   statut:'confirmée' },
+  { prenom:'Sandrine',  nom:'Lemaire',   telephone:'06 45 05 43 21', email:'sandrine.lemaire@yahoo.fr',  date_reservation:'2026-03-07', heure:'21:30', couverts:2, message:'',                                   statut:'annulée'   },
+
+  /* ══ 8 MARS (Dimanche) ══ */
+  { prenom:'Robert',    nom:'Mercier',   telephone:'06 56 04 32 10', email:'r.mercier@sfr.fr',           date_reservation:'2026-03-08', heure:'12:00', couverts:3, message:'',                                   statut:'confirmée' },
+  { prenom:'Martine',   nom:'Colin',     telephone:'06 67 03 21 09', email:'martine.colin@gmail.com',    date_reservation:'2026-03-08', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Gilles',    nom:'Renaud',    telephone:'06 78 02 10 98', email:'g.renaud@orange.fr',         date_reservation:'2026-03-08', heure:'13:00', couverts:5, message:'Allergie aux fruits à coque',        statut:'confirmée' },
+  { prenom:'Dominique', nom:'Boyer',     telephone:'06 89 01 09 87', email:'dom.boyer@laposte.net',      date_reservation:'2026-03-08', heure:'19:30', couverts:2, message:'Bougie anniversaire svp',             statut:'confirmée' },
+  { prenom:'Henri',     nom:'Garnier',   telephone:'06 90 00 98 76', email:'h.garnier@free.fr',          date_reservation:'2026-03-08', heure:'20:30', couverts:4, message:'',                                   statut:'confirmée' },
+
+  /* ══ 10 MARS (Mardi) ══ */
+  { prenom:'Corinne',   nom:'Barbier',   telephone:'06 11 22 33 44', email:'corinne.barbier@gmail.com',  date_reservation:'2026-03-10', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'David',     nom:'Lambert',   telephone:'06 22 33 44 55', email:'d.lambert@sfr.fr',           date_reservation:'2026-03-10', heure:'19:00', couverts:3, message:'',                                   statut:'confirmée' },
+  { prenom:'Monique',   nom:'Guillot',   telephone:'06 33 44 55 66', email:'m.guillot@orange.fr',        date_reservation:'2026-03-10', heure:'20:00', couverts:2, message:'Régime sans gluten',                  statut:'confirmée' },
+
+  /* ══ 11 MARS (Mercredi) ══ */
+  { prenom:'Laurent',   nom:'Bertrand',  telephone:'06 44 55 66 77', email:'l.bertrand@gmail.com',       date_reservation:'2026-03-11', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Sylvie',    nom:'Gilles',    telephone:'06 55 66 77 88', email:'sylvie.gilles@free.fr',      date_reservation:'2026-03-11', heure:'13:00', couverts:2, message:'',                                   statut:'annulée'   },
+  { prenom:'Nicolas',   nom:'Mathieu',   telephone:'06 66 77 88 99', email:'n.mathieu@yahoo.fr',         date_reservation:'2026-03-11', heure:'20:30', couverts:6, message:'Repas de fête de fin d\'année',      statut:'confirmée' },
+
+  /* ══ 12 MARS (Jeudi) ══ */
+  { prenom:'Catherine', nom:'Denis',     telephone:'06 77 88 99 00', email:'cat.denis@gmail.com',        date_reservation:'2026-03-12', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Thomas',    nom:'Henry',     telephone:'06 88 99 00 11', email:'t.henry@sfr.fr',             date_reservation:'2026-03-12', heure:'19:30', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Valérie',   nom:'Marchal',   telephone:'06 99 00 11 22', email:'v.marchal@orange.fr',        date_reservation:'2026-03-12', heure:'20:00', couverts:3, message:'Allergie aux crustacés pour 2 pers.', statut:'confirmée' },
+  { prenom:'Alain',     nom:'Meunier',   telephone:'06 00 11 22 33', email:'a.meunier@laposte.net',      date_reservation:'2026-03-12', heure:'21:00', couverts:2, message:'',                                   statut:'confirmée' },
+
+  /* ══ 13 MARS (Vendredi) ══ */
+  { prenom:'Élodie',    nom:'Perrin',    telephone:'06 11 00 22 33', email:'elodie.perrin@gmail.com',    date_reservation:'2026-03-13', heure:'12:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Grégoire',  nom:'Lucas',     telephone:'06 22 11 33 44', email:'g.lucas@gmail.com',          date_reservation:'2026-03-13', heure:'12:30', couverts:4, message:'Chaise haute nécessaire',             statut:'confirmée' },
+  { prenom:'Aurélie',   nom:'Picard',    telephone:'06 33 22 44 55', email:'aurelie.picard@free.fr',     date_reservation:'2026-03-13', heure:'19:00', couverts:2, message:'Table en terrasse',                   statut:'confirmée' },
+  { prenom:'Sébastien', nom:'Fleury',    telephone:'06 44 33 55 66', email:'s.fleury@sfr.fr',            date_reservation:'2026-03-13', heure:'20:00', couverts:5, message:'',                                   statut:'confirmée' },
+  { prenom:'Delphine',  nom:'Vasseur',   telephone:'06 55 44 66 77', email:'d.vasseur@outlook.com',      date_reservation:'2026-03-13', heure:'21:30', couverts:2, message:'Dîner d\'anniversaire de mariage',   statut:'confirmée' },
+
+  /* ══ 14 MARS (Samedi) ══ */
+  { prenom:'Florian',   nom:'Roussel',   telephone:'06 66 55 77 88', email:'f.roussel@gmail.com',        date_reservation:'2026-03-14', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Émilie',    nom:'Bourgeois', telephone:'06 77 66 88 99', email:'emilie.bourgeois@yahoo.fr',   date_reservation:'2026-03-14', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Maxime',    nom:'Lefebvre',  telephone:'06 88 77 99 00', email:'m.lefebvre@free.fr',         date_reservation:'2026-03-14', heure:'13:00', couverts:8, message:'Anniversaire 40 ans — groupe',        statut:'confirmée' },
+  { prenom:'Pauline',   nom:'Masson',    telephone:'06 99 88 00 11', email:'p.masson@sfr.fr',            date_reservation:'2026-03-14', heure:'19:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Antoine',   nom:'Leclerc',   telephone:'06 00 99 11 22', email:'a.leclerc@gmail.com',        date_reservation:'2026-03-14', heure:'20:00', couverts:3, message:'',                                   statut:'confirmée' },
+  { prenom:'Camille',   nom:'Giraud',    telephone:'06 11 88 22 33', email:'c.giraud@orange.fr',         date_reservation:'2026-03-14', heure:'20:30', couverts:4, message:'Menu prestige si possible',           statut:'confirmée' },
+  { prenom:'Théo',      nom:'Jacquet',   telephone:'06 22 77 33 44', email:'theo.jacquet@gmail.com',     date_reservation:'2026-03-14', heure:'21:00', couverts:2, message:'',                                   statut:'annulée'   },
+
+  /* ══ 15 MARS (Dimanche) ══ */
+  { prenom:'Manon',     nom:'Chenier',   telephone:'06 33 66 44 55', email:'manon.chenier@free.fr',      date_reservation:'2026-03-15', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Romain',    nom:'Perez',     telephone:'06 44 55 55 66', email:'r.perez@gmail.com',          date_reservation:'2026-03-15', heure:'12:30', couverts:6, message:'Repas de famille dominical',          statut:'confirmée' },
+  { prenom:'Lucie',     nom:'Perret',    telephone:'06 55 44 66 77', email:'lucie.perret@yahoo.fr',      date_reservation:'2026-03-15', heure:'13:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Hugo',      nom:'Renaud',    telephone:'06 66 33 77 88', email:'h.renaud@sfr.fr',            date_reservation:'2026-03-15', heure:'19:00', couverts:3, message:'',                                   statut:'confirmée' },
+  { prenom:'Emma',      nom:'Cartier',   telephone:'06 77 22 88 99', email:'emma.cartier@gmail.com',     date_reservation:'2026-03-15', heure:'20:00', couverts:2, message:'Allergie aux arachides',              statut:'confirmée' },
+  { prenom:'Arthur',    nom:'Breton',    telephone:'06 88 11 99 00', email:'a.breton@laposte.net',       date_reservation:'2026-03-15', heure:'21:00', couverts:5, message:'',                                   statut:'confirmée' },
+
+  /* ══ 17 MARS (Mardi) — futur ══ */
+  { prenom:'Charlotte', nom:'Fournier',  telephone:'06 12 34 11 22', email:'charlotte.fournier@gmail.com',date_reservation:'2026-03-17', heure:'12:30', couverts:2, message:'',                                  statut:'confirmée' },
+  { prenom:'Gabriel',   nom:'Arnaud',    telephone:'06 23 45 22 33', email:'g.arnaud@orange.fr',         date_reservation:'2026-03-17', heure:'19:00', couverts:4, message:'Table en terrasse',                   statut:'confirmée' },
+  { prenom:'Inès',      nom:'Dupuis',    telephone:'06 34 56 33 44', email:'ines.dupuis@free.fr',        date_reservation:'2026-03-17', heure:'20:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Nathan',    nom:'Collin',    telephone:'06 45 67 44 55', email:'n.collin@sfr.fr',            date_reservation:'2026-03-17', heure:'21:00', couverts:3, message:'Intolérance lactose',                 statut:'confirmée' },
+
+  /* ══ 18 MARS (Mercredi) — futur ══ */
+  { prenom:'Léa',       nom:'Vidal',     telephone:'06 56 78 55 66', email:'lea.vidal@gmail.com',        date_reservation:'2026-03-18', heure:'12:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Clément',   nom:'Moulin',    telephone:'06 67 89 66 77', email:'c.moulin@yahoo.fr',          date_reservation:'2026-03-18', heure:'12:30', couverts:6, message:'Repas d\'affaires',                  statut:'confirmée' },
+  { prenom:'Océane',    nom:'Robin',     telephone:'06 78 90 77 88', email:'o.robin@outlook.com',        date_reservation:'2026-03-18', heure:'20:00', couverts:2, message:'',                                   statut:'confirmée' },
+
+  /* ══ 19 MARS (Jeudi) — futur ══ */
+  { prenom:'Alexis',    nom:'Guérin',    telephone:'06 89 01 88 99', email:'alexis.guerin@gmail.com',    date_reservation:'2026-03-19', heure:'12:30', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Clara',     nom:'Aubert',    telephone:'06 90 12 99 00', email:'clara.aubert@free.fr',       date_reservation:'2026-03-19', heure:'19:30', couverts:2, message:'Dîner romantique',                   statut:'confirmée' },
+  { prenom:'Baptiste',  nom:'Leclercq',  telephone:'06 01 23 00 11', email:'b.leclercq@sfr.fr',          date_reservation:'2026-03-19', heure:'20:00', couverts:3, message:'',                                   statut:'confirmée' },
+  { prenom:'Sarah',     nom:'Michel',    telephone:'06 12 34 11 00', email:'sarah.michel@gmail.com',     date_reservation:'2026-03-19', heure:'21:30', couverts:2, message:'',                                   statut:'confirmée' },
+
+  /* ══ 20 MARS (Vendredi) — futur ══ */
+  { prenom:'Lucas',     nom:'Bonnet',    telephone:'06 23 45 22 11', email:'lucas.bonnet@orange.fr',     date_reservation:'2026-03-20', heure:'12:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Jade',      nom:'Morel',     telephone:'06 34 56 33 22', email:'jade.morel@gmail.com',       date_reservation:'2026-03-20', heure:'12:30', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Tom',       nom:'Faure',     telephone:'06 45 67 44 33', email:'tom.faure@laposte.net',      date_reservation:'2026-03-20', heure:'19:00', couverts:2, message:'Table en terrasse',                   statut:'confirmée' },
+  { prenom:'Alice',     nom:'Hubert',    telephone:'06 56 78 55 44', email:'alice.hubert@free.fr',       date_reservation:'2026-03-20', heure:'20:00', couverts:6, message:'Enterrement de vie de jeune fille',  statut:'confirmée' },
+  { prenom:'Raphaël',   nom:'Colin',     telephone:'06 67 89 66 55', email:'r.colin@gmail.com',          date_reservation:'2026-03-20', heure:'21:00', couverts:3, message:'',                                   statut:'confirmée' },
+
+  /* ══ 21 MARS (Samedi) — futur ══ */
+  { prenom:'Mathilde',  nom:'Petit',     telephone:'06 78 90 77 66', email:'mathilde.petit@yahoo.fr',    date_reservation:'2026-03-21', heure:'12:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Ethan',     nom:'Renaud',    telephone:'06 89 01 88 77', email:'ethan.renaud@sfr.fr',        date_reservation:'2026-03-21', heure:'12:30', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Zoé',       nom:'Bernard',   telephone:'06 90 12 99 88', email:'zoe.bernard@gmail.com',      date_reservation:'2026-03-21', heure:'13:00', couverts:6, message:'Anniversaire 30 ans',                 statut:'confirmée' },
+  { prenom:'Noah',      nom:'Dumont',    telephone:'06 01 23 00 99', email:'noah.dumont@orange.fr',      date_reservation:'2026-03-21', heure:'13:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Anaïs',     nom:'Gros',      telephone:'06 12 34 11 22', email:'anais.gros@free.fr',         date_reservation:'2026-03-21', heure:'19:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Julien',    nom:'Leroux',    telephone:'06 23 45 22 33', email:'j.leroux@gmail.com',         date_reservation:'2026-03-21', heure:'19:30', couverts:2, message:'Menu Prestige',                      statut:'confirmée' },
+  { prenom:'Camille',   nom:'Jacobs',    telephone:'06 34 56 33 44', email:'c.jacobs@sfr.fr',            date_reservation:'2026-03-21', heure:'20:30', couverts:10,message:'Séminaire d\'entreprise — groupe',   statut:'confirmée' },
+  { prenom:'Simon',     nom:'Fontaine',  telephone:'06 45 67 44 55', email:'s.fontaine@outlook.com',     date_reservation:'2026-03-21', heure:'21:00', couverts:2, message:'Dîner romantique, bougie svp',       statut:'confirmée' },
+
+  /* ══ 22 MARS (Dimanche) — futur ══ */
+  { prenom:'Elisa',     nom:'Marceau',   telephone:'06 56 78 55 66', email:'elisa.marceau@gmail.com',    date_reservation:'2026-03-22', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Théo',      nom:'Verne',     telephone:'06 67 89 66 77', email:'theo.verne@free.fr',         date_reservation:'2026-03-22', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Margot',    nom:'Garnier',   telephone:'06 78 90 77 88', email:'m.garnier@yahoo.fr',         date_reservation:'2026-03-22', heure:'13:00', couverts:8, message:'Repas dominical en famille',          statut:'confirmée' },
+  { prenom:'Paul',      nom:'Auger',     telephone:'06 89 01 88 99', email:'p.auger@sfr.fr',             date_reservation:'2026-03-22', heure:'19:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Manon',     nom:'Guichard',  telephone:'06 90 12 99 00', email:'manon.guichard@gmail.com',   date_reservation:'2026-03-22', heure:'20:00', couverts:3, message:'Végétarien pour 1 personne',          statut:'confirmée' },
+  { prenom:'Hugo',      nom:'Martin',    telephone:'06 01 23 00 11', email:'hugo.martin@orange.fr',      date_reservation:'2026-03-22', heure:'21:30', couverts:2, message:'',                                   statut:'confirmée' },
+
+  /* ══ 24 MARS (Mardi) — futur ══ */
+  { prenom:'Lola',      nom:'Lecomte',   telephone:'06 11 99 22 33', email:'lola.lecomte@gmail.com',     date_reservation:'2026-03-24', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Rémi',      nom:'Chevallier',telephone:'06 22 88 33 44', email:'r.chevallier@free.fr',       date_reservation:'2026-03-24', heure:'19:30', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Pauline',   nom:'Berthet',   telephone:'06 33 77 44 55', email:'p.berthet@sfr.fr',           date_reservation:'2026-03-24', heure:'20:30', couverts:2, message:'Allergie au lait',                   statut:'confirmée' },
+
+  /* ══ 27 MARS (Vendredi) — futur ══ */
+  { prenom:'Éléonore',  nom:'Perrot',    telephone:'06 44 66 55 66', email:'eleonore.perrot@gmail.com',  date_reservation:'2026-03-27', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Axel',      nom:'Marion',    telephone:'06 55 55 66 77', email:'axel.marion@orange.fr',      date_reservation:'2026-03-27', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Juliette',  nom:'Collet',    telephone:'06 66 44 77 88', email:'j.collet@yahoo.fr',          date_reservation:'2026-03-27', heure:'19:00', couverts:3, message:'',                                   statut:'confirmée' },
+  { prenom:'Vincent',   nom:'Lacombe',   telephone:'06 77 33 88 99', email:'v.lacombe@free.fr',          date_reservation:'2026-03-27', heure:'20:00', couverts:6, message:'Repas de promotion',                  statut:'confirmée' },
+  { prenom:'Lilou',     nom:'Picard',    telephone:'06 88 22 99 00', email:'lilou.picard@gmail.com',     date_reservation:'2026-03-27', heure:'21:00', couverts:2, message:'',                                   statut:'confirmée' },
+
+  /* ══ 28 MARS (Samedi) — futur ══ */
+  { prenom:'Maxence',   nom:'Blanchard', telephone:'06 99 11 00 11', email:'m.blanchard@sfr.fr',         date_reservation:'2026-03-28', heure:'12:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Eva',       nom:'Arnoux',    telephone:'06 00 00 11 22', email:'eva.arnoux@gmail.com',       date_reservation:'2026-03-28', heure:'12:30', couverts:4, message:'Table en terrasse si possible',       statut:'confirmée' },
+  { prenom:'Liam',      nom:'Renault',   telephone:'06 11 99 22 11', email:'liam.renault@free.fr',       date_reservation:'2026-03-28', heure:'13:00', couverts:6, message:'',                                   statut:'confirmée' },
+  { prenom:'Romane',    nom:'Galand',    telephone:'06 22 88 33 22', email:'r.galand@orange.fr',         date_reservation:'2026-03-28', heure:'19:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Louis',     nom:'Besson',    telephone:'06 33 77 44 33', email:'louis.besson@gmail.com',     date_reservation:'2026-03-28', heure:'20:00', couverts:4, message:'Demande en mariage — roses svp !',   statut:'confirmée' },
+  { prenom:'Adèle',     nom:'Bonneau',   telephone:'06 44 66 55 44', email:'adele.bonneau@yahoo.fr',     date_reservation:'2026-03-28', heure:'20:30', couverts:3, message:'',                                   statut:'confirmée' },
+  { prenom:'Clémence',  nom:'Charron',   telephone:'06 55 55 66 55', email:'clemence.charron@sfr.fr',    date_reservation:'2026-03-28', heure:'21:30', couverts:2, message:'Intolérance gluten',                  statut:'confirmée' },
+
+  /* ══ 29 MARS (Dimanche) — futur ══ */
+  { prenom:'Axelle',    nom:'Fouchet',   telephone:'06 66 44 77 66', email:'axelle.fouchet@gmail.com',   date_reservation:'2026-03-29', heure:'12:00', couverts:4, message:'',                                   statut:'confirmée' },
+  { prenom:'Tristan',   nom:'Valentin',  telephone:'06 77 33 88 77', email:'t.valentin@free.fr',         date_reservation:'2026-03-29', heure:'12:30', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Cloé',      nom:'Boucher',   telephone:'06 88 22 99 88', email:'cloe.boucher@laposte.net',   date_reservation:'2026-03-29', heure:'13:30', couverts:6, message:'Repas en famille',                   statut:'confirmée' },
+  { prenom:'Killian',   nom:'Tessier',   telephone:'06 99 11 00 99', email:'k.tessier@gmail.com',        date_reservation:'2026-03-29', heure:'19:00', couverts:2, message:'',                                   statut:'confirmée' },
+  { prenom:'Enora',     nom:'Launay',    telephone:'06 00 00 11 00', email:'enora.launay@sfr.fr',        date_reservation:'2026-03-29', heure:'20:30', couverts:3, message:'Allergie aux céréales',               statut:'confirmée' },
+];
+
+/* ---- SEED ---- */
+const logBox   = document.getElementById('logBox');
+const progress = document.getElementById('progressSection');
+const bar      = document.getElementById('progressBar');
+const barLabel = document.getElementById('progressLabel');
+const summary  = document.getElementById('summaryBox');
+const sumText  = document.getElementById('summaryText');
+const btnInsert = document.getElementById('btnInsert');
+const btnDelete = document.getElementById('btnDelete');
+
+function log(msg, type = 'ok') {
+  logBox.style.display = 'block';
+  const line = document.createElement('div');
+  line.className = `log-line log-${type}`;
+  line.textContent = msg;
+  logBox.appendChild(line);
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+function setProgress(done, total) {
+  const pct = Math.round((done / total) * 100);
+  bar.style.width = pct + '%';
+  barLabel.textContent = `${done} / ${total} réservations insérées…`;
+}
+
+btnInsert.addEventListener('click', async () => {
+  btnInsert.disabled = true;
+  btnDelete.disabled = true;
+  logBox.innerHTML   = '';
+  logBox.style.display = 'block';
+  progress.style.display = 'block';
+  summary.style.display  = 'none';
+
+  log(`Insertion de ${DATA.length} réservations…`, 'info');
+
+  let ok = 0, err = 0;
+  const BATCH = 10;
+
+  for (let i = 0; i < DATA.length; i += BATCH) {
+    const batch = DATA.slice(i, i + BATCH);
+    try {
+      const { error } = await sb.from('reservations').insert(batch);
+      if (error) {
+        log(`Erreur lot ${Math.floor(i/BATCH)+1} : ${error.message}`, 'err');
+        err += batch.length;
+      } else {
+        ok += batch.length;
+        log(`Lot ${Math.floor(i/BATCH)+1} — ${batch.length} réservations OK`, 'ok');
+      }
+    } catch(e) {
+      log(`Exception : ${e.message}`, 'err');
+      err += batch.length;
+    }
+    setProgress(ok + err, DATA.length);
+  }
+
+  barLabel.textContent = 'Terminé.';
+  summary.style.display = 'block';
+  sumText.textContent = `${ok} réservation(s) insérée(s) avec succès.${err ? ` ${err} erreur(s).` : ''}`;
+  if (err) log('Conseil : vérifiez vos politiques RLS Supabase (voir panel admin).', 'err');
+
+  btnInsert.disabled = false;
+  btnDelete.disabled = false;
+});
+
+btnDelete.addEventListener('click', async () => {
+  if (!confirm('Supprimer TOUTES les réservations de la base ? Cette action est irréversible.')) return;
+  btnInsert.disabled = true;
+  btnDelete.disabled = true;
+  logBox.innerHTML = '';
+  logBox.style.display = 'block';
+  progress.style.display = 'none';
+  summary.style.display  = 'none';
+
+  log('Suppression en cours…', 'info');
+  try {
+    const { error } = await sb.from('reservations').delete().neq('id', 0);
+    if (error) { log('Erreur : ' + error.message, 'err'); }
+    else        { log('Toutes les réservations ont été supprimées.', 'ok'); }
+  } catch(e) { log('Exception : ' + e.message, 'err'); }
+
+  btnInsert.disabled = false;
+  btnDelete.disabled = false;
+});
+</script>
+</body>
+</html>
