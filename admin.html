@@ -7,24 +7,24 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body class="admin-body">
 
-  <!-- ÉCRAN DE CONNEXION -->
+  <!-- ═══════════════════════════════════════════
+       ÉCRAN DE CONNEXION
+  ═══════════════════════════════════════════ -->
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
       <div class="login-logo">
         <span class="login-logo-text">Le Mas Provençal</span>
-        <span class="login-logo-sub">Administration</span>
+        <span class="login-logo-sub">Espace Administration</span>
       </div>
-      <h1 class="login-title">Connexion</h1>
-      <p class="login-subtitle">Accès réservé au personnel autorisé</p>
 
       <div class="alert alert-error" id="loginError" style="display:none;">
-        <div class="alert-icon">✕</div>
-        <div class="alert-content">
-          <strong>Mot de passe incorrect</strong>
-        </div>
+        <div class="alert-icon">!</div>
+        <div class="alert-content"><strong>Mot de passe incorrect</strong></div>
       </div>
 
       <form id="loginForm">
@@ -32,117 +32,672 @@
           <label for="loginPassword">Mot de passe</label>
           <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
         </div>
-        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+        <button type="submit" class="btn btn-primary btn-full">Accéder au panneau</button>
       </form>
       <a href="index.html" class="login-back">← Retour au site</a>
     </div>
   </div>
 
-  <!-- INTERFACE ADMIN -->
+  <!-- ═══════════════════════════════════════════
+       INTERFACE ADMIN
+  ═══════════════════════════════════════════ -->
   <div id="adminInterface" style="display:none;">
 
-    <!-- HEADER ADMIN -->
+    <!-- HEADER -->
     <header class="admin-header">
       <div class="admin-header-left">
-        <span class="admin-logo">Le Mas Provençal</span>
-        <span class="admin-badge">Administration</span>
+        <div class="admin-logo-block">
+          <span class="admin-logo-name">Le Mas Provençal</span>
+          <span class="admin-logo-sub">Administration</span>
+        </div>
       </div>
       <div class="admin-header-right">
-        <a href="index.html" class="btn btn-sm btn-outline-dark">Voir le site</a>
-        <button id="logoutBtn" class="btn btn-sm btn-danger">Déconnexion</button>
+        <span class="admin-date-display" id="adminHeaderDate"></span>
+        <button class="notif-bell-btn" id="notifBell" title="Nouvelles réservations">
+          🔔
+          <span class="notif-bell-badge" id="notifBellBadge" style="display:none;">0</span>
+        </button>
+        <button id="addReservationBtn" class="admin-add-btn">+ Nouvelle réservation</button>
+        <a href="index.html" target="_blank" class="admin-link-btn">Voir le site</a>
+        <button id="logoutBtn" class="admin-logout-btn">Déconnexion</button>
       </div>
     </header>
 
-    <!-- CONTENU ADMIN -->
-    <main class="admin-main">
-      <div class="admin-container">
+    <div class="admin-layout">
 
-        <!-- STATS -->
-        <div class="admin-stats">
-          <div class="stat-card">
-            <div class="stat-icon today">📅</div>
-            <div class="stat-body">
-              <span class="stat-number" id="statToday">—</span>
-              <span class="stat-label">Réservations aujourd'hui</span>
+      <!-- ── SIDEBAR ── -->
+      <aside class="admin-sidebar">
+        <nav class="admin-nav">
+          <button class="admin-nav-item active" data-view="today">
+            <span class="admin-nav-icon">◈</span>
+            <span>Aujourd'hui</span>
+          </button>
+          <button class="admin-nav-item" data-view="all">
+            <span class="admin-nav-icon">≡</span>
+            <span>Toutes les réservations</span>
+          </button>
+          <button class="admin-nav-item" data-view="salle">
+            <span class="admin-nav-icon">⊞</span>
+            <span>Plan de salle</span>
+          </button>
+          <button class="admin-nav-item" data-view="notif">
+            <span class="admin-nav-icon">✉</span>
+            <span>Notifications</span>
+          </button>
+          <button class="admin-nav-item" data-view="qr">
+            <span class="admin-nav-icon">▦</span>
+            <span>QR Codes tables</span>
+          </button>
+          <button class="admin-nav-item" data-view="fidelite">
+            <span class="admin-nav-icon">★</span>
+            <span>Carte fidélité</span>
+          </button>
+          <button class="admin-nav-item" data-view="attente">
+            <span class="admin-nav-icon">⏳</span>
+            <span>Liste d'attente</span>
+          </button>
+          <button class="admin-nav-item" data-view="menuAdmin">
+            <span class="admin-nav-icon">🍽</span>
+            <span>Gestion du menu</span>
+          </button>
+        </nav>
+
+        <div class="admin-sidebar-stats">
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-value" id="sidebarToday">—</span>
+            <span class="sidebar-stat-label">Réservations aujourd'hui</span>
+          </div>
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-value" id="sidebarCouverts">—</span>
+            <span class="sidebar-stat-label">Couverts aujourd'hui</span>
+          </div>
+          <div class="sidebar-stat-divider"></div>
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-value" id="sidebarTotal">—</span>
+            <span class="sidebar-stat-label">Total réservations</span>
+          </div>
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-value" id="sidebarCancelled">—</span>
+            <span class="sidebar-stat-label">Annulées</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── MAIN CONTENT ── -->
+      <main class="admin-content">
+
+        <!-- ─ VUE AUJOURD'HUI ─ -->
+        <div id="viewToday" class="admin-view active">
+
+          <!-- Date nav -->
+          <div class="admin-view-header">
+            <div class="admin-date-nav">
+              <button class="date-nav-btn" id="prevDay" title="Jour précédent">&#8592;</button>
+              <div class="admin-date-nav-center">
+                <h2 class="admin-view-title" id="todayTitle">Aujourd'hui</h2>
+                <span class="admin-view-subtitle" id="todayDateLabel"></span>
+              </div>
+              <button class="date-nav-btn" id="nextDay" title="Jour suivant">&#8594;</button>
+            </div>
+            <button class="admin-refresh-btn" id="refreshBtn" title="Actualiser">&#8635; Actualiser</button>
+          </div>
+
+          <!-- Summary chips -->
+          <div class="today-summary" id="todaySummary" style="display:none;">
+            <div class="summary-chip">
+              <span class="summary-chip-val" id="chipTotal">0</span>
+              <span class="summary-chip-label">réservation(s)</span>
+            </div>
+            <div class="summary-chip">
+              <span class="summary-chip-val" id="chipCouverts">0</span>
+              <span class="summary-chip-label">couvert(s)</span>
+            </div>
+            <div class="summary-chip chip-lunch">
+              <span class="summary-chip-val" id="chipLunch">0</span>
+              <span class="summary-chip-label">déjeuner</span>
+            </div>
+            <div class="summary-chip chip-dinner">
+              <span class="summary-chip-val" id="chipDinner">0</span>
+              <span class="summary-chip-label">dîner</span>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon pending">⏳</div>
-            <div class="stat-body">
-              <span class="stat-number" id="statPending">—</span>
-              <span class="stat-label">En attente de confirmation</span>
+
+          <!-- RLS notice -->
+          <div class="rls-notice" id="rlsNotice" style="display:none;">
+            <strong>Mise à jour impossible.</strong> Ajoutez une politique RLS dans Supabase :
+            <button class="rls-toggle" id="rlsToggle">Voir ▾</button>
+            <div class="rls-details" id="rlsDetails" style="display:none;">
+              <code>ALTER TABLE reservations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_all" ON reservations FOR ALL USING (true) WITH CHECK (true);</code>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon confirmed">✓</div>
-            <div class="stat-body">
-              <span class="stat-number" id="statConfirmed">—</span>
-              <span class="stat-label">Confirmées</span>
-            </div>
+
+          <!-- État chargement -->
+          <div id="todayLoading" class="admin-loading-state">
+            <div class="spinner"></div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon total">📊</div>
-            <div class="stat-body">
-              <span class="stat-number" id="statTotal">—</span>
-              <span class="stat-label">Total des réservations</span>
-            </div>
+          <div id="todayEmpty" class="admin-empty-state" style="display:none;">
+            <span class="empty-icon">◌</span>
+            <p>Aucune réservation pour ce jour.</p>
+          </div>
+
+          <!-- Tableau du jour -->
+          <div id="todayTableWrapper" style="display:none;">
+            <table class="admin-table" id="todayTable">
+              <thead>
+                <tr>
+                  <th>Heure</th>
+                  <th>Service</th>
+                  <th>Client</th>
+                  <th>Couverts</th>
+                  <th>Téléphone</th>
+                  <th>Note</th>
+                  <th>Statut</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="todayBody"></tbody>
+            </table>
           </div>
         </div>
 
-        <!-- FILTRES -->
-        <div class="admin-toolbar">
-          <h2 class="admin-section-title">Réservations</h2>
-          <div class="admin-filters">
+        <!-- ─ VUE TOUTES LES RÉSERVATIONS ─ -->
+        <div id="viewAll" class="admin-view">
+          <div class="admin-view-header">
+            <h2 class="admin-view-title">Toutes les réservations</h2>
+            <button class="admin-refresh-btn" id="refreshAllBtn">&#8635; Actualiser</button>
+          </div>
+
+          <!-- Barre de filtres -->
+          <div class="all-filters">
+            <input type="text" id="filterSearch" class="admin-input" placeholder="🔍 Rechercher un client, un téléphone…" style="flex:1;min-width:200px;" />
+
+            <!-- Calendrier admin -->
+            <div class="admin-dp-wrapper" id="adminDpWrapper">
+              <button class="admin-dp-trigger" id="adminDpTrigger" type="button">
+                <span id="adminDpDisplay">Toutes les dates</span>
+                <span class="admin-dp-chevron">▾</span>
+              </button>
+              <button class="admin-dp-clear" id="adminDpClear" title="Effacer la date" style="display:none;">✕</button>
+              <div class="dp-dropdown" id="adminDpDropdown">
+                <div class="dp-header">
+                  <button class="dp-nav" id="adminDpPrev" type="button">&#8592;</button>
+                  <span class="dp-month-year" id="adminDpMonthYear"></span>
+                  <button class="dp-nav" id="adminDpNext" type="button">&#8594;</button>
+                </div>
+                <div class="dp-weekdays">
+                  <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span>
+                </div>
+                <div class="dp-days" id="adminDpDays"></div>
+              </div>
+            </div>
+
+            <select id="filterService" class="admin-select">
+              <option value="">Tous les services</option>
+              <option value="dejeuner">Déjeuner</option>
+              <option value="diner">Dîner</option>
+            </select>
             <select id="filterStatut" class="admin-select">
               <option value="">Tous les statuts</option>
-              <option value="en attente">En attente</option>
               <option value="confirmée">Confirmées</option>
               <option value="annulée">Annulées</option>
             </select>
-            <input type="date" id="filterDate" class="admin-input" placeholder="Filtrer par date" />
-            <button id="refreshBtn" class="btn btn-sm btn-secondary">↻ Actualiser</button>
           </div>
-        </div>
 
-        <!-- ÉTAT DE CHARGEMENT / ERREUR -->
-        <div id="adminLoading" class="admin-loading">
-          <div class="loading-spinner"></div>
-          <p>Chargement des réservations...</p>
-        </div>
-
-        <div id="adminError" class="admin-error-msg" style="display:none;">
-          <p>Impossible de charger les réservations. Vérifiez la configuration Supabase.</p>
-          <button id="retryBtn" class="btn btn-sm btn-secondary">Réessayer</button>
-        </div>
-
-        <!-- TABLEAU -->
-        <div id="adminTableWrapper" class="admin-table-wrapper" style="display:none;">
-          <div id="noResults" class="no-results" style="display:none;">
+          <div id="allLoading" class="admin-loading-state" style="display:none;">
+            <div class="spinner"></div>
+          </div>
+          <div id="allEmpty" class="admin-empty-state" style="display:none;">
+            <span class="empty-icon">◌</span>
             <p>Aucune réservation trouvée.</p>
           </div>
-          <table class="admin-table" id="reservationsTable">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Heure</th>
-                <th>Client</th>
-                <th>Couverts</th>
-                <th>Téléphone</th>
-                <th>Message</th>
-                <th>Statut</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="reservationsBody">
-              <!-- Rempli par JS -->
-            </tbody>
-          </table>
+
+          <div id="allTableWrapper" style="display:none;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Heure</th>
+                  <th>Client</th>
+                  <th>Couverts</th>
+                  <th>Téléphone</th>
+                  <th>Note</th>
+                  <th>Statut</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="allBody"></tbody>
+            </table>
+          </div>
         </div>
 
-      </div>
-    </main>
+        <!-- ─ VUE PLAN DE SALLE ─ -->
+        <div id="viewSalle" class="admin-view">
+          <div class="admin-view-header">
+            <h2 class="admin-view-title">Plan de salle</h2>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+              <input type="date" id="salleDate" class="admin-input" />
+              <select id="salleService" class="admin-select">
+                <option value="dejeuner">Déjeuner</option>
+                <option value="diner">Dîner</option>
+              </select>
+              <button class="btn btn-primary btn-sm" id="salleAutoFillBtn">⚡ Remplir auto</button>
+              <button class="btn btn-ghost btn-sm" id="salleAerialBtn">🗺 Vue aérienne</button>
+              <button class="btn btn-ghost btn-sm" id="salleConfigBtn">⚙ Gérer tables</button>
+            </div>
+          </div>
+          <div class="salle-stats" id="salleStats"></div>
+          <div class="salle-legend">
+            <span class="salle-legend-item libre">Libre</span>
+            <span class="salle-legend-item reservee">Réservée</span>
+            <span class="salle-legend-item occupee">Occupée</span>
+          </div>
+
+          <!-- Zones dynamiques -->
+          <div id="salleZones"></div>
+
+          <!-- Vue aérienne -->
+          <div id="aerialView" style="display:none;"></div>
+
+          <!-- Panel config tables -->
+          <div id="tableConfigPanel" class="table-config-panel" style="display:none;">
+            <div class="table-config-header">
+              <h3>Gérer les tables &amp; zones</h3>
+              <button class="btn btn-ghost btn-sm" id="salleConfigClose">Fermer ✕</button>
+            </div>
+
+            <!-- Gestion des zones -->
+            <div class="table-config-zones">
+              <h4>Zones disponibles</h4>
+              <div id="zoneConfigList"></div>
+              <div class="admin-form-row" style="margin-top:0.5rem;">
+                <div class="admin-form-group">
+                  <input type="text" id="newZoneName" class="admin-input" placeholder="Ex : vip, bar, jardin…" />
+                </div>
+                <div class="admin-form-group" style="display:flex;align-items:flex-end;">
+                  <button class="btn btn-secondary btn-sm" id="addZoneBtn">+ Ajouter zone</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="tableConfigList"></div>
+
+            <div class="table-config-add">
+              <h4>Ajouter une table</h4>
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label>Zone</label>
+                  <select id="newTableZone" class="admin-select" style="width:100%;"></select>
+                </div>
+                <div class="admin-form-group">
+                  <label>Capacité</label>
+                  <input type="number" id="newTableCap" class="admin-input" min="1" max="30" placeholder="4" />
+                </div>
+                <div class="admin-form-group" style="display:flex;align-items:flex-end;">
+                  <button class="btn btn-primary" id="addTableBtn">+ Ajouter</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─ VUE NOTIFICATIONS ─ -->
+        <div id="viewNotif" class="admin-view">
+          <div class="admin-view-header">
+            <h2 class="admin-view-title">Notifications</h2>
+          </div>
+
+          <div class="notif-section">
+            <div class="notif-card">
+              <div class="notif-card-header">
+                <div>
+                  <h3 class="notif-card-title">Rappels J-1</h3>
+                  <p class="notif-card-desc">Envoyer un rappel aux clients qui dînent demain.</p>
+                </div>
+                <button class="btn btn-primary" id="btnEnvoyerRappels" disabled>Charger…</button>
+              </div>
+              <label class="notif-toggle-label" style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem;font-size:0.83rem;color:var(--text-light);cursor:pointer;">
+                <input type="checkbox" id="toggleAutoRappel" style="width:auto;" />
+                Envoi automatique activé (une fois par jour à l'ouverture du panel)
+              </label>
+              <div class="notif-progress" id="rappelProgress" style="display:none;">
+                <div class="notif-progress-bar"><div class="notif-progress-fill" id="rappelProgressFill"></div></div>
+                <span class="notif-progress-label" id="rappelProgressLabel"></span>
+              </div>
+              <div id="rappelResult" class="notif-result"></div>
+            </div>
+
+            <div class="notif-card">
+              <div class="notif-card-header">
+                <div>
+                  <h3 class="notif-card-title">Demandes d'avis post-repas</h3>
+                  <p class="notif-card-desc">Envoyer une demande d'avis aux clients qui ont dîné avant-hier.</p>
+                </div>
+                <button class="btn btn-primary" id="btnEnvoyerAvis" disabled>Charger…</button>
+              </div>
+              <label class="notif-toggle-label" style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem;font-size:0.83rem;color:var(--text-light);cursor:pointer;">
+                <input type="checkbox" id="toggleAutoAvis" style="width:auto;" />
+                Envoi automatique activé
+              </label>
+              <div class="notif-progress" id="avisProgress" style="display:none;">
+                <div class="notif-progress-bar"><div class="notif-progress-fill" id="avisProgressFill"></div></div>
+                <span class="notif-progress-label" id="avisProgressLabel"></span>
+              </div>
+              <div id="avisResult" class="notif-result"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─ VUE QR CODES ─ -->
+        <div id="viewQr" class="admin-view">
+          <div class="admin-view-header">
+            <h2 class="admin-view-title">QR Codes tables</h2>
+            <button class="btn btn-primary" onclick="window.print()">🖨 Imprimer</button>
+          </div>
+          <div class="qr-grid" id="qrGrid"></div>
+        </div>
+
+        <!-- ─ VUE FIDÉLITÉ ─ -->
+        <div id="viewFidelite" class="admin-view">
+          <div class="admin-view-header">
+            <h2 class="admin-view-title">Carte fidélité</h2>
+            <button class="admin-refresh-btn" id="refreshFideliteBtn">&#8635; Actualiser</button>
+          </div>
+          <div id="fideliteLoading" class="admin-loading-state" style="display:none;"><div class="spinner"></div></div>
+          <div id="fideliteEmpty" class="admin-empty-state" style="display:none;">
+            <span class="empty-icon">◌</span>
+            <p>Aucun client fidèle pour le moment.</p>
+          </div>
+          <div id="fideliteTableWrapper" style="display:none;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>E-mail</th>
+                  <th>Visites</th>
+                  <th>Niveau</th>
+                </tr>
+              </thead>
+              <tbody id="fideliteBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ─ VUE LISTE D'ATTENTE ─ -->
+        <div id="viewAttente" class="admin-view">
+          <div class="admin-view-header">
+            <h2 class="admin-view-title">Liste d'attente</h2>
+            <button class="admin-refresh-btn" id="refreshAttenteBtn">&#8635; Actualiser</button>
+          </div>
+          <div id="attenteLoading" class="admin-loading-state" style="display:none;"><div class="spinner"></div></div>
+          <div id="attenteEmpty" class="admin-empty-state" style="display:none;">
+            <span class="empty-icon">◌</span>
+            <p>Aucune demande en liste d'attente.</p>
+          </div>
+          <div id="attenteTableWrapper" style="display:none;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Date demande</th>
+                  <th>Client</th>
+                  <th>Date souhaitée</th>
+                  <th>Couverts</th>
+                  <th>Téléphone</th>
+                  <th>Message</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="attenteBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ─ VUE GESTION DU MENU ─ -->
+        <div id="viewMenuAdmin" class="admin-view">
+          <div class="admin-view-header">
+            <h2 class="admin-view-title">Gestion du menu</h2>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+              <button class="admin-refresh-btn" id="refreshMenuBtn">&#8635; Actualiser</button>
+              <button class="btn btn-primary" id="btnAddPlat">+ Ajouter un plat</button>
+            </div>
+          </div>
+          <div id="menuAdminLoading" class="admin-loading-state" style="display:none;"><div class="spinner"></div></div>
+          <div id="menuAdminContent"></div>
+        </div>
+
+      </main>
+    </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════
+       MODAL AJOUT RÉSERVATION
+  ═══════════════════════════════════════════ -->
+  <div id="addModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="addModalTitle">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <h3 id="addModalTitle">Nouvelle réservation</h3>
+        <button class="modal-close" id="addModalClose" aria-label="Fermer">&#215;</button>
+      </div>
+      <div class="modal-body">
+        <form id="adminAddForm" novalidate>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Prénom <span class="required">*</span></label>
+              <input type="text" id="addPrenom" class="admin-input" placeholder="Jean" />
+            </div>
+            <div class="admin-form-group">
+              <label>Nom <span class="required">*</span></label>
+              <input type="text" id="addNom" class="admin-input" placeholder="Dupont" />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Téléphone <span class="required">*</span></label>
+              <input type="tel" id="addTelephone" class="admin-input" placeholder="06 12 34 56 78" />
+            </div>
+            <div class="admin-form-group">
+              <label>E-mail</label>
+              <input type="email" id="addEmail" class="admin-input" placeholder="jean@example.com" />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Date <span class="required">*</span></label>
+              <input type="date" id="addDate" class="admin-input" />
+            </div>
+            <div class="admin-form-group">
+              <label>Heure <span class="required">*</span></label>
+              <select id="addHeure" class="admin-select" style="width:100%;">
+                <option value="">Choisir un créneau…</option>
+                <optgroup label="🌞 Déjeuner">
+                  <option value="12:00">12h00</option><option value="12:15">12h15</option>
+                  <option value="12:30">12h30</option><option value="12:45">12h45</option>
+                  <option value="13:00">13h00</option><option value="13:15">13h15</option>
+                  <option value="13:30">13h30</option><option value="13:45">13h45</option>
+                  <option value="14:00">14h00</option><option value="14:15">14h15</option>
+                </optgroup>
+                <optgroup label="🌙 Dîner">
+                  <option value="19:00">19h00</option><option value="19:15">19h15</option>
+                  <option value="19:30">19h30</option><option value="19:45">19h45</option>
+                  <option value="20:00">20h00</option><option value="20:15">20h15</option>
+                  <option value="20:30">20h30</option><option value="20:45">20h45</option>
+                  <option value="21:00">21h00</option><option value="21:15">21h15</option>
+                  <option value="21:30">21h30</option><option value="21:45">21h45</option>
+                  <option value="22:00">22h00</option><option value="22:15">22h15</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Couverts <span class="required">*</span></label>
+              <input type="number" id="addCouverts" class="admin-input" value="2" min="1" max="20" />
+            </div>
+            <div class="admin-form-group">
+              <label>Note <span class="optional">(optionnel)</span></label>
+              <input type="text" id="addMessage" class="admin-input" placeholder="Occasion spéciale, allergie..." />
+            </div>
+          </div>
+          <div id="addFormError" class="alert alert-error" style="display:none;margin-top:1rem;">
+            <div class="alert-icon">!</div>
+            <div class="alert-content"><strong id="addFormErrorMsg">Veuillez remplir tous les champs obligatoires.</strong></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="addModalSubmit">
+          <span id="addModalBtnText">Ajouter la réservation</span>
+          <span id="addModalBtnLoader" class="btn-loader" style="display:none;"></span>
+        </button>
+        <button class="btn btn-ghost" id="addModalCancel">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL SALLE (ASSIGNATION TABLE)
+  ═══════════════════════════════════════════ -->
+  <div id="salleModal" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-box" style="max-width:500px;">
+      <div class="modal-header">
+        <h3 id="salleModalTitle">Table</h3>
+        <button class="modal-close" id="salleModalClose">&#215;</button>
+      </div>
+      <div class="modal-body">
+        <div id="salleModalStatus" style="margin-bottom:1rem;"></div>
+        <div id="salleModalReservations"></div>
+      </div>
+      <div class="modal-footer" id="salleModalFooter">
+        <button class="btn btn-ghost" id="salleModalCloseBtn">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL ANNULATION
+  ═══════════════════════════════════════════ -->
+  <div id="cancelModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">Annuler la réservation</h3>
+        <button class="modal-close" id="modalClose" aria-label="Fermer">&#215;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-client" id="modalClientInfo"></p>
+        <div class="modal-email-notice" id="modalEmailNotice">
+          Un e-mail d'annulation sera envoyé à <strong id="modalEmail"></strong>.
+        </div>
+        <div class="modal-email-off" id="modalEmailOff" style="display:none;">
+          <em>Email désactivé — configurez EmailJS dans script.js pour envoyer une notification au client.</em>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="modalConfirmCancel">
+          <span id="modalBtnText">Confirmer l'annulation</span>
+          <span id="modalBtnLoader" class="btn-loader" style="display:none;"></span>
+        </button>
+        <button class="btn btn-ghost" id="modalCancelClose">Retour</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL PLAT (AJOUT / MODIFICATION)
+  ═══════════════════════════════════════════ -->
+  <div id="platModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="platModalTitle">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <h3 id="platModalTitle">Ajouter un plat</h3>
+        <button class="modal-close" id="platModalClose" aria-label="Fermer">&#215;</button>
+      </div>
+      <div class="modal-body">
+        <form id="platForm" novalidate>
+          <input type="hidden" id="platId" value="" />
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Catégorie <span class="required">*</span></label>
+              <select id="platCategorie" class="admin-select" style="width:100%;">
+                <option value="">Choisir…</option>
+                <option value="entree">Entrée</option>
+                <option value="plat">Plat</option>
+                <option value="dessert">Dessert</option>
+                <option value="vin">Vin</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label>Nom <span class="required">*</span></label>
+              <input type="text" id="platNom" class="admin-input" placeholder="Soupe de tomates..." />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Prix (€) <span class="required">*</span></label>
+              <input type="number" id="platPrix" class="admin-input" step="0.01" min="0" placeholder="24.50" />
+            </div>
+            <div class="admin-form-group">
+              <label>Tag <span class="optional">(optionnel)</span></label>
+              <input type="text" id="platTag" class="admin-input" placeholder="Signature, Végétarien..." />
+            </div>
+          </div>
+          <div class="admin-form-group" style="margin-bottom:1rem;">
+            <label>Description <span class="optional">(optionnel)</span></label>
+            <textarea id="platDescription" class="admin-input" rows="2" placeholder="Description du plat..."></textarea>
+          </div>
+          <div class="admin-form-group" style="margin-bottom:1rem;">
+            <label>Photo du plat <span class="optional">(optionnel)</span></label>
+            <div class="photo-drop-zone" id="photoDropZone">
+              <div class="photo-drop-prompt" id="photoDropPrompt">
+                <span class="photo-drop-icon">📷</span>
+                <span>Glisser-déposer une image<br/>ou cliquer pour choisir</span>
+                <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
+              </div>
+              <div class="photo-drop-preview" id="photoDropPreview" style="display:none;"></div>
+            </div>
+            <input type="text" id="platPhoto" class="admin-input" placeholder="ou coller une URL : https://…" style="margin-top:0.5rem;" />
+          </div>
+          <div class="admin-form-group" style="margin-bottom:1rem;">
+            <label>Allergènes <span class="optional">(optionnel)</span></label>
+            <input type="text" id="platAllergens" class="admin-input" placeholder="Gluten, Lactose..." />
+          </div>
+          <div class="admin-form-group" style="margin-top:0.5rem;">
+            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+              <input type="checkbox" id="platActif" checked style="width:auto;" />
+              Plat actif (visible sur la carte)
+            </label>
+          </div>
+          <div id="platFormError" class="alert alert-error" style="display:none;margin-top:1rem;">
+            <div class="alert-icon">!</div>
+            <div class="alert-content"><strong id="platFormErrorMsg">Veuillez remplir tous les champs obligatoires.</strong></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="platModalSubmit">
+          <span id="platModalBtnText">Enregistrer</span>
+          <span id="platModalBtnLoader" class="btn-loader" style="display:none;"></span>
+        </button>
+        <button class="btn btn-ghost" id="platModalCancel">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal confirmation générique -->
+  <div id="confirmModal" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-header">
+        <h3 id="confirmModalTitle">Confirmer</h3>
+      </div>
+      <div class="modal-body">
+        <p id="confirmModalMsg" style="margin:0;line-height:1.6;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="confirmModalOk">Confirmer</button>
+        <button class="btn btn-ghost" id="confirmModalCancel">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
   <script src="script.js"></script>
 </body>
 </html>
